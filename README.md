@@ -7,7 +7,17 @@ hints"_.
 
 ## Supported cases
 * PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
+
+  *Example:*
+  ```
+  /tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
+  ```
 * SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
+
+  *Example:*
+  ```
+  /tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
+  ```
 
 ## How to test?
 1. Clone the repository
