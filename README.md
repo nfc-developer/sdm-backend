@@ -18,7 +18,11 @@ hints"_.
    pip3 install -r requirements.txt
    cp config.dist.py config.py
    ```
-3. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
+3. Run Flask development server:
+   ```
+   python3 app.py --host 127.0.0.1 --port 5000
+   ```
+4. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
