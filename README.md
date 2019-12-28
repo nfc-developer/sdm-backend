@@ -13,7 +13,7 @@ hints"_.
    git clone https://github.com/icedevml/ntag424-dna-server.git
    cd ntag424-dna-server
    ```
-2. Install the required dependencies, configure and run:
+2. Install the required dependencies and copy example config:
    ```
    pip3 install -r requirements.txt
    cp config.dist.py config.py
