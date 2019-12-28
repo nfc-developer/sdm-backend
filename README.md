@@ -3,6 +3,8 @@
 An example of Flask application which can decrypt and validate signature of Secure Direct Messaging "mirrors". Implemented according to _AN12196 "NTAG 424 DNA and NTAG 424 DNA TagTamper features and
 hints"_.
 
+*Note: NTAG — is a trademark of NXP B.V.*
+
 ## Supported cases
 * PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
 * SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
