@@ -1,0 +1,17 @@
+<html lang="en">
+<head>
+    <title>SDM Endpoint</title>
+</head>
+<body>
+    <h1>NTAG 424 DNA Secure Direct Messaging Demo</h1>
+    <p>
+        PICC Data Tag: <code>{{ picc_data_tag.hex() }}</code><br>
+        NFC TAG UID: <code>{{ uid.hex() }}</code><br>
+        Read counter: <code>{{ read_ctr_num }}</code><br>
+        {% if file_data %}
+        File data (hex): <code>{{ file_data.hex() }}</code><br>
+        File data (UTF-8): <code>{{ file_data_utf8 }}</code>
+        {% endif %}
+    </p>
+</body>
+</html>
