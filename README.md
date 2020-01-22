@@ -7,6 +7,9 @@ hints"_.
 
 *Note: NTAG — is a trademark of NXP B.V.*
 
+## How to setup SDM?
+Use NXP's TagWriter application for Android. When writing an URL record, choose "Configure mirroring options". Refer to the tag's datasheet to understand particular options/flags.
+
 ## Supported cases
 * PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
 
