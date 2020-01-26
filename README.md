@@ -27,8 +27,8 @@ Use NXP's TagWriter application for Android. When writing an URL record, choose 
 ## How to test?
 1. Clone the repository
    ```
-   git clone https://github.com/icedevml/ntag424-dna-server.git
-   cd ntag424-dna-server
+   git clone https://github.com/icedevml/ntag424-backend.git
+   cd ntag424-backend
    ```
 2. Install the required dependencies and copy example config:
    ```
