@@ -19,11 +19,9 @@ Use NXP's TagWriter application for Android. When writing an URL record, choose 
   ```
   
   Proposed SDM Settings for TagWriter:
-  * [X] Enable SDM Mirroring
-  * SDM Meta Read Access Right: 00
+  * [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
   * [X] Enable UID Mirroring
-  * [X] Enable Counter Mirroring
-  * SDM Counter Retrieval Key: 00
+  * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
   * [ ] Enable Read Counter Limit
   * [ ] Enable Encrypted File Data Mirroring
 
@@ -34,15 +32,12 @@ Use NXP's TagWriter application for Android. When writing an URL record, choose 
   http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
   ```
   
-  SDM Settings for TagWriter:
-  * [X] Enable SDM Mirroring
-  * SDM Meta Read Access Right: 00
+  Proposed SDM Settings for TagWriter:
+  * [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
   * [X] Enable UID Mirroring
-  * [X] Enable Counter Mirroring
-  * SDM Counter Retrieval Key: 00
+  * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
   * [ ] Enable Read Counter Limit
-  * [X] Enable Encrypted File Data Mirroring
-  * Encryption data Length: 16
+  * [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
 
 ## How to test?
 1. Clone the repository
