@@ -17,12 +17,27 @@ Use NXP's TagWriter application for Android. When writing an URL record, choose 
   ```
   http://myserver.example/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
   ```
+  
+  SDM Settings for TagWriter:
+  * [X] Enable SDM Mirroring
+  * [X] Enable UID Mirroring
+  * [X] Enable Counter Mirroring
+  * [ ] Enable Read Counter Limit
+  * [ ] Enable Encrypted File Data Mirroring
+
 * SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
 
   *Example:*
   ```
   http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
   ```
+  
+  SDM Settings for TagWriter:
+  * [X] Enable SDM Mirroring
+  * [X] Enable UID Mirroring
+  * [X] Enable Counter Mirroring
+  * [ ] Enable Read Counter Limit
+  * [X] Enable Encrypted File Data Mirroring
 
 ## How to test?
 1. Clone the repository
