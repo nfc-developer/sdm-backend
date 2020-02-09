@@ -11,33 +11,51 @@ hints"_.
 Use NXP's TagWriter application for Android. When writing an URL record, choose "Configure mirroring options". Refer to the tag's datasheet to understand particular options/flags.
 
 ## Supported cases
-* PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
-
-  *Example:*
-  ```
-  http://myserver.example/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
-  ```
+### PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
+**Example:**
+```
+http://myserver.example/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
+```
   
-  Proposed SDM Settings for TagWriter:
-  * [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
-  * [X] Enable UID Mirroring
-  * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
-  * [ ] Enable Read Counter Limit
-  * [ ] Enable Encrypted File Data Mirroring
+**Proposed SDM Settings for TagWriter:**
+* [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
+* [X] Enable UID Mirroring
+* [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
+* [ ] Enable Read Counter Limit
+* [ ] Enable Encrypted File Data Mirroring
 
-* SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
+**Input URL:**
+```
+http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+```
 
-  *Example:*
-  ```
-  http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
-  ```
+**PICCDataOffset:**
+```
+http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+                                      ^ PICCDataOffset
+```
+
+i.e.: in TagWriter, set the cursor between `=` and `0` when setting offset.
+
+**SDMMACInputOffset/SDMMACOffset:**
+```
+http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+                                                                            ^ SDMMACInputOffset/SDMMACOffset
+```
+
+### SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
+
+**Example:**
+```
+http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
+```
   
-  Proposed SDM Settings for TagWriter:
-  * [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
-  * [X] Enable UID Mirroring
-  * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
-  * [ ] Enable Read Counter Limit
-  * [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
+**Proposed SDM Settings for TagWriter:**
+* [X] Enable SDM Mirroring (SDM Meta Read Access Right: `00`)
+* [X] Enable UID Mirroring
+* [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
+* [ ] Enable Read Counter Limit
+* [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
 
 ## How to test?
 1. Clone the repository
