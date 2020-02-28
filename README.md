@@ -58,6 +58,7 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
 * [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
 
 ## How to test?
+### Manual installation
 1. Clone the repository
    ```
    git clone https://github.com/icedevml/ntag424-backend.git
@@ -73,6 +74,13 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
    python3 app.py --host 127.0.0.1 --port 5000
    ```
 4. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
+
+### Using Docker
+1. Run
+   ```
+   docker run -p 5000:80 icedevml/ntag424-backend
+   ```
+2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
