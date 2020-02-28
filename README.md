@@ -7,6 +7,37 @@ hints"_.
 
 *Note: NTAG — is a trademark of NXP B.V.*
 
+## How to test?
+### Manual installation
+1. Clone the repository
+   ```
+   git clone https://github.com/icedevml/ntag424-backend.git
+   cd ntag424-backend
+   ```
+2. Setup the virtualenv
+   ```
+   apt-get install python3-venv
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+3. Install the required dependencies and copy example config:
+   ```
+   pip3 install -r requirements.txt
+   cp config.dist.py config.py
+   ```
+4. Run Flask development server:
+   ```
+   python3 app.py --host 127.0.0.1 --port 5000
+   ```
+5. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
+
+### Using Docker
+1. Run
+   ```
+   docker run -p 5000:80 icedevml/ntag424-backend
+   ```
+2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
+
 ## How to setup SDM?
 Use NXP's TagWriter application for Android. When writing an URL record, choose "Configure mirroring options". Refer to the tag's datasheet to understand particular options/flags.
 
@@ -56,37 +87,6 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
 * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
 * [ ] Enable Read Counter Limit
 * [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
-
-## How to test?
-### Manual installation
-1. Clone the repository
-   ```
-   git clone https://github.com/icedevml/ntag424-backend.git
-   cd ntag424-backend
-   ```
-2. Setup the virtualenv
-   ```
-   apt-get install python3-venv
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-3. Install the required dependencies and copy example config:
-   ```
-   pip3 install -r requirements.txt
-   cp config.dist.py config.py
-   ```
-4. Run Flask development server:
-   ```
-   python3 app.py --host 127.0.0.1 --port 5000
-   ```
-5. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
-
-### Using Docker
-1. Run
-   ```
-   docker run -p 5000:80 icedevml/ntag424-backend
-   ```
-2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
