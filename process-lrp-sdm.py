@@ -4,6 +4,7 @@ A short example how to decrypt and validate CMAC for a simple SDM in LRP mode on
 
 import io
 
+# from: https://github.com/icedevml/ntag424-ev2-crypto/blob/master/lrp.py
 from lrp import LRP
 
 import binascii
