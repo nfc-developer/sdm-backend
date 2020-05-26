@@ -31,7 +31,7 @@ assert decrypted_msg.hex() == "c7042e1d222a63806a000016e2ca89d1"
 # SV = 00h || 01h || 00h || 80h [ || UID] [ || SDMReadCtr] [ || ZeroPadding] || 1Eh || E1h
 svstream = io.BytesIO()
 svstream.write(b"\x00\x01\x00\x80")
-svstream.write(binascii.unhexlify("042e1d222a63806a0000"))
+svstream.write(decrypted_msg[1:11])  # UID || SDMReadCtr
 
 while (svstream.getbuffer().nbytes + 2) % 16 != 0:
     svstream.write(b"\x00")
@@ -49,7 +49,8 @@ assert master_key.hex() == "99c2fd9c885c2ca3c9089c20057310c0"
 # generate actual MAC_LRP
 mac_obj = LRP(master_key, 0, b"\x00" * 16, pad=False)
 # everything in hex since PICCData till the MAC offset
-full_tag = mac_obj.cmac(b"AAE1508939ECF6FF26BCE407959AB1A5EC022819A35CD293x")
+msg_no_cmac = (msg.split('x')[0] + 'x').encode('ascii')
+full_tag = mac_obj.cmac(msg_no_cmac)
 short_tag = bytes(bytearray([full_tag[i] for i in range(16) if i % 2 == 1])).hex()
 
 assert short_tag == cmac.lower()
