@@ -92,3 +92,6 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
 1. Edit `config.py` to adjust the decryption keys.
 2. Setup nginx (with obligatory SSL encryption).
 2. Configure the application to run with uwsgi ([example tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04)).
+
+## Dealing with LRP cipher
+In general, SDMs generated with LRP cipher are not supported by this code. See [icedevml/ntag424-ev2-crypto](https://github.com/icedevml/ntag424-ev2-crypto/blob/master/lrp.py) for the implementation of LRP primitive. In [test_lrp_sdm.py](https://github.com/icedevml/ntag424-ev2-crypto/blob/master/test_lrp_sdm.py) file, there is a short example of SDM message decryption with LRP primitives.
