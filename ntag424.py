@@ -17,12 +17,12 @@ class InvalidMessage(RuntimeError):
     pass
 
 
-def calculate_sdmmac(sdm_meta_read_key: bytes,
+def calculate_sdmmac(sdm_file_read_key: bytes,
                      picc_data: bytes,
                      enc_file_data: bytes = None) -> bytes:
     """
     Calculate SDMMAC for NTAG 424 DNA
-    :param sdm_meta_read_key: MAC calculation key (K_SDMMetaReadKey)
+    :param sdm_file_read_key: MAC calculation key (K_SDMFileReadKey)
     :param picc_data: PICCDataTag [ || UID ][ || SDMReadCtr ]]
     :param enc_file_data: SDMEncFileData (if used)
     :return: calculated SDMMAC (8 bytes)
@@ -35,7 +35,7 @@ def calculate_sdmmac(sdm_meta_read_key: bytes,
         # zero padding till the end of the block
         sv2stream.write(b"\x00")
 
-    c2 = CMAC.new(sdm_meta_read_key, ciphermod=AES)
+    c2 = CMAC.new(sdm_file_read_key, ciphermod=AES)
     c2.update(sv2stream.getvalue())
     sdmmac = CMAC.new(c2.digest(), ciphermod=AES)
 
@@ -83,8 +83,8 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
                         enc_file_data: bytes = None) -> Tuple[bytes, bytes, int, Optional[bytes]]:
     """
     Decrypt SUN message for NTAG 424 DNA
-    :param sdm_meta_read_key: MAC calculation key (K_SDMMetaReadKey)
-    :param sdm_file_read_key: SUN decryption key (K_SDMFileReadKey)
+    :param sdm_meta_read_key: SUN decryption key (K_SDMMetaReadKey)
+    :param sdm_file_read_key: MAC calculation key (K_SDMFileReadKey)
     :param ciphertext: Encrypted SUN message
     :param mac: SDMMAC of the SUN message
     :param enc_file_data: SDMEncFileData (if present)
@@ -111,7 +111,7 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
     # dont read the buffer any further if we don't recognize it
     if uid_length not in [0x07]:
         # fake SDMMAC calculation to avoid potential timing attacks
-        calculate_sdmmac(sdm_meta_read_key, b"\x00" * 10, enc_file_data)
+        calculate_sdmmac(sdm_file_read_key, b"\x00" * 10, enc_file_data)
         raise InvalidMessage("Unsupported UID length")
 
     if uid_mirroring_en:
@@ -123,13 +123,13 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
         datastream.write(read_ctr)
         read_ctr_num = struct.unpack("<I", read_ctr + b"\x00")[0]
 
-    if sdmmac != calculate_sdmmac(sdm_meta_read_key, datastream.getvalue(), enc_file_data):
+    if sdmmac != calculate_sdmmac(sdm_file_read_key, datastream.getvalue(), enc_file_data):
         raise InvalidMessage("Message is not properly signed - invalid MAC")
 
     if enc_file_data:
         if not read_ctr:
             raise InvalidMessage("SDMReadCtr is required to decipher SDMENCFileData.")
 
-        file_data = decrypt_file_data(sdm_file_read_key, datastream.getvalue(), read_ctr, enc_file_data)
+        file_data = decrypt_file_data(sdm_meta_read_key, datastream.getvalue(), read_ctr, enc_file_data)
 
     return picc_data_tag, uid, read_ctr_num, file_data
