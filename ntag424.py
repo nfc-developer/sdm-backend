@@ -92,7 +92,7 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
     :raises:
         InvalidMessage: if SUN message is invalid
     """
-    cipher = AES.new(sdm_file_read_key, AES.MODE_CBC, IV=b'\x00' * 16)
+    cipher = AES.new(sdm_meta_read_key, AES.MODE_CBC, IV=b'\x00' * 16)
     plaintext = cipher.decrypt(picc_enc_data)
     pstream = io.BytesIO(plaintext)
     datastream = io.BytesIO()
