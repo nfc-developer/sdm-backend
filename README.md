@@ -11,12 +11,13 @@ hints"_.
 ### Manual installation
 1. Clone the repository
    ```
+   apt install -y git
    git clone https://github.com/icedevml/ntag424-backend.git
    cd ntag424-backend
    ```
 2. Setup the virtualenv
    ```
-   apt-get install python3-venv
+   apt install -y python3 python3-pip python3-venv
    python3 -m venv venv
    source venv/bin/activate
    ```
@@ -27,7 +28,7 @@ hints"_.
    ```
 4. Run Flask development server:
    ```
-   python3 app.py --host 127.0.0.1 --port 5000
+   python3 app.py --host 0.0.0.0 --port 5000
    ```
 5. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
