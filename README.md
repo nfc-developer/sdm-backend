@@ -87,7 +87,11 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
 * [X] Enable UID Mirroring
 * [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `00`)
 * [ ] Enable Read Counter Limit
-* [X] Enable Encrypted File Data Mirroring (Encryption data Length: `16`)
+* [X] Enable Encrypted File Data Mirroring (Encryption data Length: `32`)
+* PICC Data Offset: set cursor between `picc_data=` and `0` then click `Set PICC Data Offset`
+* Enc Data Offset: set cursor between `enc=` and `0` then click `Set Enc File Mirroring Offset`
+* SDM MAC Input Offset: set cursor between `enc=` and `0` then click `Set Offset` (upper button)
+* SDM MAC Offset: set cursor between `cmac=` and `0` then click `Set Offset` (lower button)
 
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
