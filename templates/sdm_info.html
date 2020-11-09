@@ -11,7 +11,10 @@
         Read counter: <code>{{ read_ctr_num }}</code><br>
         {% if file_data %}
         File data (hex): <code>{{ file_data.hex() }}</code><br>
-        File data (UTF-8): <code>{{ file_data_utf8 }}</code>
+        File data (UTF-8): <code>{{ file_data_utf8 }}</code><br>
+        {% if tt_status %}
+        Tag Tamper Status: {{ tt_status }}
+        {% endif %}
         {% endif %}
     </p>
 </body>
