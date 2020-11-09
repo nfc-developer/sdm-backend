@@ -93,6 +93,17 @@ http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A
 * SDM MAC Input Offset: set cursor between `enc=` and `0` then click `Set Offset` (upper button)
 * SDM MAC Offset: set cursor between `cmac=` and `0` then click `Set Offset` (lower button)
 
+### TagTamper Status mirror
+
+In this case, TT Status Offset should be equal Enc Data Offset.
+
+**Example:**
+```
+http://myserver.example/tag?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
+```
+
+First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - loop closed, `O` - loop open, `I` - TagTamper not enabled yet).
+
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
 2. Setup nginx (with obligatory SSL encryption).
