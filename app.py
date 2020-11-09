@@ -59,12 +59,25 @@ def sdm_info():
     if file_data:
         file_data_utf8 = file_data.decode('utf-8', 'ignore')
 
+        tt_perm_status = file_data_utf8[0]
+        tt_cur_status = file_data_utf8[1]
+
+        if tt_perm_status == 'C' and tt_cur_status == 'C':
+            tt_status = 'OK (not tampered)'
+        elif tt_perm_status == 'O' and tt_cur_status == 'C':
+            tt_status = 'Tampered! (loop closed)'
+        elif tt_perm_status == 'O' and tt_cur_status == 'O':
+            tt_status = 'Tampered! (loop open)'
+        else:
+            tt_status = 'Unknown'
+
     return render_template('sdm_info.html',
                            picc_data_tag=picc_data_tag,
                            uid=uid,
                            read_ctr_num=read_ctr_num,
                            file_data=file_data,
-                           file_data_utf8=file_data_utf8)
+                           file_data_utf8=file_data_utf8,
+                           tt_status=tt_status)
 
 
 if __name__ == '__main__':
