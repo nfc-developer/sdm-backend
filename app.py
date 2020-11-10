@@ -26,7 +26,7 @@ def _internal_sdm(with_tt=False):
     enc_file_data = request.args.get(ENC_FILE_DATA_PARAM)
     sdmmac = request.args.get(SDMMAC_PARAM)
 
-    if not enc_picc_data or not sdmmac:
+    if not enc_picc_data:
         raise BadRequest("Parameter {} is required".format(ENC_PICC_DATA_PARAM))
 
     if not sdmmac:
