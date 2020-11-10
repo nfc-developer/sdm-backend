@@ -18,8 +18,7 @@ def sdm_main():
     return render_template('sdm_main.html')
 
 
-@app.route('/tag')
-def sdm_info():
+def _internal_sdm(with_tt=False):
     """
     SUN decrypting/validating endpoint.
     """
@@ -55,21 +54,28 @@ def sdm_info():
     picc_data_tag, uid, read_ctr_num, file_data = res
 
     file_data_utf8 = ""
+    tt_status = ""
+    tt_color = ""
 
     if file_data:
         file_data_utf8 = file_data.decode('utf-8', 'ignore')
 
-        tt_perm_status = file_data_utf8[0]
-        tt_cur_status = file_data_utf8[1]
+        if with_tt:
+            tt_perm_status = file_data_utf8[0]
+            tt_cur_status = file_data_utf8[1]
 
-        if tt_perm_status == 'C' and tt_cur_status == 'C':
-            tt_status = 'OK (not tampered)'
-        elif tt_perm_status == 'O' and tt_cur_status == 'C':
-            tt_status = 'Tampered! (loop closed)'
-        elif tt_perm_status == 'O' and tt_cur_status == 'O':
-            tt_status = 'Tampered! (loop open)'
-        else:
-            tt_status = 'Unknown'
+            if tt_perm_status == 'C' and tt_cur_status == 'C':
+                tt_status = 'OK (not tampered)'
+                tt_color = 'green'
+            elif tt_perm_status == 'O' and tt_cur_status == 'C':
+                tt_status = 'Tampered! (loop closed)'
+                tt_color = 'red'
+            elif tt_perm_status == 'O' and tt_cur_status == 'O':
+                tt_status = 'Tampered! (loop open)'
+                tt_color = 'red'
+            else:
+                tt_status = 'Unknown'
+                tt_color = 'yellow'
 
     return render_template('sdm_info.html',
                            picc_data_tag=picc_data_tag,
@@ -77,7 +83,18 @@ def sdm_info():
                            read_ctr_num=read_ctr_num,
                            file_data=file_data,
                            file_data_utf8=file_data_utf8,
-                           tt_status=tt_status)
+                           tt_status=tt_status,
+                           tt_color=tt_color)
+
+
+@app.route('/tagtt')
+def sdm_info_tt():
+    return _internal_sdm(with_tt=True)
+
+
+@app.route('/tag')
+def sdm_info():
+    return _internal_sdm(with_tt=False)
 
 
 if __name__ == '__main__':

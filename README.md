@@ -99,7 +99,7 @@ In this case, TT Status Offset should be equal Enc Data Offset.
 
 **Example:**
 ```
-http://myserver.example/tag?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
+http://myserver.example/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
 ```
 
 First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - loop closed, `O` - loop open, `I` - TagTamper not enabled yet).
