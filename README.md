@@ -1,19 +1,20 @@
-# Backend server for NTAG 424 DNA Secure Direct Messaging (SDM)
+# Backend server for Secure Direct Messaging (SDM)
 
-An example of Flask application which can decrypt and validate signature of Secure Direct Messaging "mirrors". Implemented according to _AN12196 "NTAG 424 DNA and NTAG 424 DNA TagTamper features and
-hints"_.
+An example of Flask application which can decrypt data contained in NDEF "mirrors" and validate their AES-CMAC cryptographic signature. Implemented according to _AN12196 "NTAG 424 DNA and NTAG 424 DNA TagTamper features and hints"_.
 
 **Pull requests welcome.**
 
 *Note: NTAG — is a trademark of NXP B.V.*
+
+*Note: This GitHub project is not affiliated with NXP B.V. in any way. Product names are mentioned here in order to inform about compatibility.*
 
 ## How to test?
 ### Manual installation
 1. Clone the repository
    ```
    apt install -y git
-   git clone https://github.com/icedevml/ntag424-backend.git
-   cd ntag424-backend
+   git clone https://github.com/icedevml/sdm-backend.git
+   cd sdm-backend
    ```
 2. Setup the virtualenv
    ```
@@ -35,7 +36,7 @@ hints"_.
 ### Using Docker
 1. Run
    ```
-   docker run -p 5000:80 icedevml/ntag424-backend
+   docker run -p 5000:80 icedevml/sdm-backend
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
