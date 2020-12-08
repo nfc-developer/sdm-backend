@@ -6,7 +6,7 @@ This code was implemented based on the examples provided in:
 import binascii
 
 import config
-from ntag424 import decrypt_sun_message, InvalidMessage
+from libsdm import decrypt_sun_message, InvalidMessage
 
 
 def test_sun1():

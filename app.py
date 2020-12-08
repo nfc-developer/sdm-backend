@@ -5,7 +5,7 @@ from flask import Flask, request, render_template
 from werkzeug.exceptions import BadRequest
 
 from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY
-from ntag424 import decrypt_sun_message, InvalidMessage
+from libsdm import decrypt_sun_message, InvalidMessage
 
 app = Flask(__name__)
 
