@@ -43,6 +43,22 @@ def test_sun2():
     assert file_data == b'xxxxxxxxxxxxxxxx'
 
 
+def test_sun3_custom():
+    original_sdmmac_param = config.SDMMAC_PARAM
+    config.SDMMAC_PARAM = ""
+    sdm_meta_read_key = binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416')
+    sdm_file_read_key = binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5')
+    picc_enc_data = binascii.unhexlify('928f9e4f0612945941745c152ff6f37f')
+    sdmmac = binascii.unhexlify('d653552c56607ffc')
+    enc_file_data = binascii.unhexlify('000246e522134cac0861acce7676cdf9')
+    config.SDMMAC_PARAM = original_sdmmac_param
+    
+    assert data_tag == b'\xc7'
+    assert uid == binascii.unhexlify(041d3c8a2d6b80)
+    assert read_ctr_num == 288
+    assert file_data == binascii.unhexlify('4e545858716e6f5f6f42467077792d56')
+
+
 def test_sun2_wrong_sdmmac():
     try:
         original_sdmmac_param = config.SDMMAC_PARAM
