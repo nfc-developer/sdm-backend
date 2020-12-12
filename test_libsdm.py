@@ -47,8 +47,8 @@ def test_sun3_custom():
     original_sdmmac_param = config.SDMMAC_PARAM
     config.SDMMAC_PARAM = ""
     data_tag, uid, read_ctr_num, file_data = decrypt_sun_message(
-        sdm_meta_read_key=binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416'),
-        sdm_file_read_key=binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5'),
+        sdm_meta_read_key=binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5'),
+        sdm_file_read_key=binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416'),
         picc_enc_data=binascii.unhexlify('8d58bac9f85a7c8cc408dca8446b567b'),
         sdmmac=binascii.unhexlify('597ef3b4aeacf37c'),
         enc_file_data=binascii.unhexlify('b9a67a744c027551462affbfa902eb37'))
