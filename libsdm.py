@@ -130,6 +130,6 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
         if not read_ctr:
             raise InvalidMessage("SDMReadCtr is required to decipher SDMENCFileData.")
 
-        file_data = decrypt_file_data(sdm_meta_read_key, datastream.getvalue(), read_ctr, enc_file_data)
+        file_data = decrypt_file_data(sdm_file_read_key, datastream.getvalue(), read_ctr, enc_file_data)
 
     return picc_data_tag, uid, read_ctr_num, file_data
