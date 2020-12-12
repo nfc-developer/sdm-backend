@@ -46,11 +46,12 @@ def test_sun2():
 def test_sun3_custom():
     original_sdmmac_param = config.SDMMAC_PARAM
     config.SDMMAC_PARAM = ""
-    sdm_meta_read_key = binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416')
-    sdm_file_read_key = binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5')
-    picc_enc_data = binascii.unhexlify('928f9e4f0612945941745c152ff6f37f')
-    sdmmac = binascii.unhexlify('d653552c56607ffc')
-    enc_file_data = binascii.unhexlify('000246e522134cac0861acce7676cdf9')
+    data_tag, uid, read_ctr_num, file_data = decrypt_sun_message(
+        sdm_meta_read_key=binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416'),
+        sdm_file_read_key=binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5'),
+        picc_enc_data=binascii.unhexlify('928f9e4f0612945941745c152ff6f37f'),
+        sdmmac=binascii.unhexlify('d653552c56607ffc'),
+        enc_file_data=binascii.unhexlify('000246e522134cac0861acce7676cdf9'))
     config.SDMMAC_PARAM = original_sdmmac_param
     
     assert data_tag == b'\xc7'
