@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 from Crypto.Hash import CMAC
 from Crypto.Cipher import AES
 
-from config import SDMMAC_PARAM
+import config
 
 
 class InvalidMessage(RuntimeError):
@@ -40,9 +40,9 @@ def calculate_sdmmac(sdm_file_read_key: bytes,
     sdmmac = CMAC.new(c2.digest(), ciphermod=AES)
 
     if enc_file_data:
-        sdmmac_param_text = "&{}=".format(SDMMAC_PARAM)
+        sdmmac_param_text = "&{}=".format(config.SDMMAC_PARAM)
         
-        if not SDMMAC_PARAM:
+        if not config.SDMMAC_PARAM:
             sdmmac_param_text = ""
 
         sdmmac.update(enc_file_data.hex().upper().encode('ascii') + sdmmac_param_text.encode('ascii'))
