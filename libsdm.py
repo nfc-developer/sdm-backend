@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 from Crypto.Hash import CMAC
 from Crypto.Cipher import AES
 
-from config import SDMMAC_PARAM
+import config
 
 
 class InvalidMessage(RuntimeError):
@@ -40,7 +40,12 @@ def calculate_sdmmac(sdm_file_read_key: bytes,
     sdmmac = CMAC.new(c2.digest(), ciphermod=AES)
 
     if enc_file_data:
-        sdmmac.update(enc_file_data.hex().upper().encode('ascii') + "&{}=".format(SDMMAC_PARAM).encode('ascii'))
+        sdmmac_param_text = "&{}=".format(config.SDMMAC_PARAM)
+        
+        if not config.SDMMAC_PARAM:
+            sdmmac_param_text = ""
+
+        sdmmac.update(enc_file_data.hex().upper().encode('ascii') + sdmmac_param_text.encode('ascii'))
 
     return bytes(bytearray([sdmmac.digest()[i] for i in range(16) if i % 2 == 1]))
 
@@ -130,6 +135,6 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
         if not read_ctr:
             raise InvalidMessage("SDMReadCtr is required to decipher SDMENCFileData.")
 
-        file_data = decrypt_file_data(sdm_meta_read_key, datastream.getvalue(), read_ctr, enc_file_data)
+        file_data = decrypt_file_data(sdm_file_read_key, datastream.getvalue(), read_ctr, enc_file_data)
 
     return picc_data_tag, uid, read_ctr_num, file_data
