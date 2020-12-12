@@ -54,7 +54,7 @@ def test_sun3_custom():
     config.SDMMAC_PARAM = original_sdmmac_param
     
     assert data_tag == b'\xc7'
-    assert uid == binascii.unhexlify(041d3c8a2d6b80)
+    assert uid == binascii.unhexlify('041d3c8a2d6b80')
     assert read_ctr_num == 288
     assert file_data == binascii.unhexlify('4e545858716e6f5f6f42467077792d56')
 
@@ -76,8 +76,3 @@ def test_sun2_wrong_sdmmac():
         raise RuntimeError("InvalidSDMMAC was not thrown as expected")
     finally:
         config.SDMMAC_PARAM = original_sdmmac_param
-
-
-test_sun1()
-test_sun2()
-test_sun2_wrong_sdmmac()
