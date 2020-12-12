@@ -40,7 +40,12 @@ def calculate_sdmmac(sdm_file_read_key: bytes,
     sdmmac = CMAC.new(c2.digest(), ciphermod=AES)
 
     if enc_file_data:
-        sdmmac.update(enc_file_data.hex().upper().encode('ascii') + "&{}=".format(SDMMAC_PARAM).encode('ascii'))
+        sdmmac_param_text = "&{}=".format(SDMMAC_PARAM)
+        
+        if not SDMMAC_PARAM:
+            sdmmac_param_text = ""
+
+        sdmmac.update(enc_file_data.hex().upper().encode('ascii') + sdmmac_param_text.encode('ascii'))
 
     return bytes(bytearray([sdmmac.digest()[i] for i in range(16) if i % 2 == 1]))
 
