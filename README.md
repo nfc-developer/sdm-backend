@@ -1,4 +1,4 @@
-# Backend server for Secure Direct Messaging (SDM)
+# Backend server for decoding Secure Unique NFC Message (SUN)
 
 An example of Flask application which can decrypt data contained in NDEF "mirrors" and validate their AES-CMAC cryptographic signature. Implemented according to _AN12196 "NTAG 424 DNA and NTAG 424 DNA TagTamper features and hints"_.
 
@@ -7,6 +7,18 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 *Note: NTAG — is a trademark of NXP B.V.*
 
 *Note: This GitHub project is not affiliated with NXP B.V. in any way. Product names are mentioned here in order to inform about compatibility.*
+
+## Contact
+Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
+
+## Complete solution
+If you are looking for a complete solution for tag configuration and management, check out the demo at [kryptonfc.com](https://kryptonfc.com). This app allows you to:
+
+* Personalize blank NFC tags with just an NFC-enabled Android smartphone (no extra hardware required).
+* Manage the list of your tags in a web panel.
+* View the list of interactions with your tags (each scan is recorded in the table).
+* Configure a simple landing page that is displayed to your users after the tag is scanned.
+* Access the details about particular interaction through an API, directly from your website.
 
 ## How to test?
 ### Manual installation
@@ -110,8 +122,5 @@ First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - l
 2. Setup nginx (with obligatory SSL encryption).
 2. Configure the application to run with uwsgi ([example tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04)).
 
-## Dealing with LRP cipher
-In general, SDMs generated with LRP cipher are not supported by this code. See [icedevml/nfc-ev2-crypto](https://github.com/icedevml/nfc-ev2-crypto/blob/master/lrp.py) for the implementation of LRP primitive. In [test_lrp_sdm.py](https://github.com/icedevml/nfc-ev2-crypto/blob/master/test_lrp_sdm.py) file, there is a short example of SDM message decryption with LRP primitives.
-
-## Contact
-Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
+## Using LRP cipher
+In general, SDMs generated with LRP cipher are not supported by this code. See [icedevml/nfc-ev2-crypto](https://github.com/icedevml/nfc-ev2-crypto/blob/master/lrp.py) for the implementation of LRP primitive. In [test_lrp_sdm.py](https://github.com/icedevml/nfc-ev2-crypto/blob/master/test_lrp_sdm.py) file, there is a short example of SDM message decryption with LRP primitive.
