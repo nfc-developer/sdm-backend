@@ -124,3 +124,9 @@ First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - l
 
 ## Using LRP cipher
 In general, SDMs generated with LRP cipher are not supported by this code. See [icedevml/nfc-ev2-crypto](https://github.com/icedevml/nfc-ev2-crypto/blob/master/lrp.py) for the implementation of LRP primitive. In [test_lrp_sdm.py](https://github.com/icedevml/nfc-ev2-crypto/blob/master/test_lrp_sdm.py) file, there is a short example of SDM message decryption with LRP primitive.
+
+## Authors
+
+* Michał Leszczyński (ml@icedev.pl)
+
+Feel free to contact if you have any questions.
