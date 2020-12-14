@@ -48,6 +48,9 @@ If you are looking for a complete solution for tag configuration and management,
 ### Using Docker
 1. Run
    ```
+   # remove old image to ensure you will have the latest version
+   docker rmi -f icedevml/sdm-backend
+   # launch sdm-backend on port 5000
    docker run -p 5000:80 icedevml/sdm-backend
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
