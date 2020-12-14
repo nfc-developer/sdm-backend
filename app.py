@@ -4,8 +4,8 @@ import binascii
 from flask import Flask, request, render_template
 from werkzeug.exceptions import BadRequest
 
-from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY
-from libsdm import decrypt_sun_message, InvalidMessage
+from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM
+from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage
 
 app = Flask(__name__)
 
@@ -95,6 +95,28 @@ def sdm_info_tt():
 @app.route('/tag')
 def sdm_info():
     return _internal_sdm(with_tt=False)
+
+
+@app.route('/tagpt')
+def sdm_info_plain():
+    try:
+        uid = binascii.unhexlify(request.args[UID_PARAM])
+        read_ctr = binascii.unhexlify(request.args[CTR_PARAM])
+        cmac = binascii.unhexlify(request.args[SDMMAC_PARAM])
+    except binascii.Error:
+        raise BadRequest("Failed to decode parameters.")
+
+    try:
+        uid, read_ctr_num = validate_plain_sun(uid=uid,
+                                               read_ctr=read_ctr,
+                                               sdmmac=cmac,
+                                               sdm_file_read_key=SDM_FILE_READ_KEY)
+    except InvalidMessage:
+        raise BadRequest("Invalid message (most probably wrong signature).")
+
+    return render_template('sdm_info.html',
+                           uid=uid,
+                           read_ctr_num=read_ctr_num)
 
 
 if __name__ == '__main__':
