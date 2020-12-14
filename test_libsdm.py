@@ -6,7 +6,7 @@ This code was implemented based on the examples provided in:
 import binascii
 
 import config
-from libsdm import decrypt_sun_message, InvalidMessage
+from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage
 
 
 def test_sun1():
@@ -77,3 +77,28 @@ def test_sun2_wrong_sdmmac():
         raise RuntimeError("InvalidSDMMAC was not thrown as expected")
     finally:
         config.SDMMAC_PARAM = original_sdmmac_param
+
+
+def test_plain_sdm():
+    validate_plain_sun(
+        uid=binascii.unhexlify('041E3C8A2D6B80'),
+        read_ctr=binascii.unhexlify('000006'),
+        sdmmac=binascii.unhexlify('4B00064004B0B3D3'),
+        sdm_file_read_key=binascii.unhexlify('00000000000000000000000000000000')
+    )
+
+
+def test_plain_sdm_wrong():
+    try:
+        validate_plain_sun(
+            uid=binascii.unhexlify('041E3C8A2D6B80'),
+            read_ctr=binascii.unhexlify('000006'),
+            sdmmac=binascii.unhexlify('AB00064004B0B3AB'),
+            sdm_file_read_key=binascii.unhexlify('00000000000000000000000000000000')
+        )
+    except InvalidMessage as e:
+        # this is expected
+        pass
+    else:
+        raise RuntimeError("InvalidMessage was not thrown as expected")
+

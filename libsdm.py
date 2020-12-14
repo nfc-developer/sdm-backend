@@ -19,11 +19,11 @@ class InvalidMessage(RuntimeError):
 
 def calculate_sdmmac(sdm_file_read_key: bytes,
                      picc_data: bytes,
-                     enc_file_data: bytes = None) -> bytes:
+                     enc_file_data: Optional[bytes] = None) -> bytes:
     """
     Calculate SDMMAC for NTAG 424 DNA
     :param sdm_file_read_key: MAC calculation key (K_SDMFileReadKey)
-    :param picc_data: PICCDataTag [ || UID ][ || SDMReadCtr ]]
+    :param picc_data: [ UID ][ SDMReadCtr ]
     :param enc_file_data: SDMEncFileData (if used)
     :return: calculated SDMMAC (8 bytes)
     """
@@ -81,11 +81,28 @@ def decrypt_file_data(sdm_file_read_key: bytes,
         .decrypt(enc_file_data)
 
 
+def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read_key: bytes):
+    read_ctr_ba = bytearray(read_ctr)
+    read_ctr_ba.reverse()
+
+    datastream = io.BytesIO()
+    datastream.write(uid)
+    datastream.write(read_ctr_ba)
+
+    proper_sdmmac = calculate_sdmmac(sdm_file_read_key, datastream.getvalue())
+
+    if sdmmac != proper_sdmmac:
+        raise InvalidMessage("Message is not properly signed - invalid MAC")
+
+    read_ctr_num = struct.unpack('>I', b"\x00" + read_ctr)[0]
+    return uid, read_ctr_num
+
+
 def decrypt_sun_message(sdm_meta_read_key: bytes,
                         sdm_file_read_key: bytes,
                         picc_enc_data: bytes,
                         sdmmac: bytes,
-                        enc_file_data: bytes = None) -> Tuple[bytes, bytes, int, Optional[bytes]]:
+                        enc_file_data: Optional[bytes] = None) -> Tuple[bytes, bytes, int, Optional[bytes]]:
     """
     Decrypt SUN message for NTAG 424 DNA
     :param sdm_meta_read_key: SUN decryption key (K_SDMMetaReadKey)
