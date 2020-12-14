@@ -107,7 +107,10 @@ def sdm_info_plain():
         raise BadRequest("Failed to decode parameters.")
 
     try:
-        uid, read_ctr_num = validate_plain_sun(uid, read_ctr, cmac, sdm_file_read_key=SDM_FILE_READ_KEY)
+        uid, read_ctr_num = validate_plain_sun(uid=uid,
+                                               read_ctr=read_ctr,
+                                               sdmmac=cmac,
+                                               sdm_file_read_key=SDM_FILE_READ_KEY)
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 
