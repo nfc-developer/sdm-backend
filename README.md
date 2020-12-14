@@ -56,6 +56,41 @@ If you are looking for a complete solution for tag configuration and management,
 Use NXP's TagWriter application for Android. When writing an URL record, choose "Configure mirroring options". Refer to the tag's datasheet to understand particular options/flags.
 
 ## Supported cases
+### UID and Read Counter Plaintext mirroring
+**Example:**
+```
+http://myserver.example/tagpt?uid=041E3C8A2D6B80&ctr=000006&cmac=4B00064004B0B3D3
+```
+
+**Proposed SDM Settings for TagWriter:**
+* [X] Enable SDM Mirroring (SDM Meta Read Access Right: `0E`)
+* [X] Enable UID Mirroring (UID
+
+**Input URL:**
+```
+http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+```
+
+**UID Offset:**
+```
+http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                  ^ UID Offset
+```
+
+i.e.: in TagWriter, set the cursor between `uid=` and the first `0` when setting offset.
+
+**Counter Offset:**
+```
+http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                                     ^ Counter Offset
+```
+
+**SDMMACInputOffset/SDMMACOffset:**
+```
+http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                                                 ^ CMAC Offset
+```
+
 ### PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
 **Example:**
 ```
@@ -80,7 +115,7 @@ http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000
                                       ^ PICCDataOffset
 ```
 
-i.e.: in TagWriter, set the cursor between `=` and `0` when setting offset.
+i.e.: in TagWriter, set the cursor between `=` and the first `0` when setting offset.
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
