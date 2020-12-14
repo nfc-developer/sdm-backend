@@ -64,7 +64,10 @@ http://myserver.example/tagpt?uid=041E3C8A2D6B80&ctr=000006&cmac=4B00064004B0B3D
 
 **Proposed SDM Settings for TagWriter:**
 * [X] Enable SDM Mirroring (SDM Meta Read Access Right: `0E`)
-* [X] Enable UID Mirroring (UID
+* [X] Enable UID Mirroring
+* [X] Enable Counter Mirroring (SDM Counter Retrieval Key: `0F`)
+* [ ] Enable Read Counter Limit (Derivation Key for CMAC Calculation: `00`)
+* [ ] Encrypted File Data Mirroring
 
 **Input URL:**
 ```
@@ -151,6 +154,16 @@ http://myserver.example/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA0
 ```
 
 First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - loop closed, `O` - loop open, `I` - TagTamper not enabled yet).
+
+### Notice about keys
+In the examples above, whenever key `00` is mentioned, you can replace it with keys `01` - `04`. It's better not to use master key `00` in production-grade SDM configuration. Whenever possible, it's also better to use different key numbers for different features (e.g. key `01` for SDM Meta Read, key `02` for SDM File Read etc).
+
+Key numbers `0E` and `0F` have a special meaning:
+
+* `0E` - Free access
+* `0F` - No access
+
+The interpretation of this meaning is slightly different for each feature, see datasheet for reference.
 
 ## Further usage
 1. Edit `config.py` to adjust the decryption keys.
