@@ -60,7 +60,7 @@ hints"</a></p>
       var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
       var res = await fetch(path);
 
-      document.getElementById("scanResult").innerText = JSON.stringify(await res.json());
+      document.getElementById("scanResult").innerText = JSON.stringify(await res.json(), null, 4);
     });
   } catch (error) {
     log("Argh! " + error);
