@@ -77,14 +77,22 @@ def _internal_sdm(with_tt=False):
                 tt_status = 'Unknown'
                 tt_color = 'yellow'
 
-    return render_template('sdm_info.html',
-                           picc_data_tag=picc_data_tag,
-                           uid=uid,
-                           read_ctr_num=read_ctr_num,
-                           file_data=file_data,
-                           file_data_utf8=file_data_utf8,
-                           tt_status=tt_status,
-                           tt_color=tt_color)
+    if request.args.get("output") == "json":
+        return jsonify({
+            "uid": uid.hex().upper(),
+            "file_data": file_data_utf8,
+            "read_ctr": read_ctr_num,
+            "tt_status": tt_status
+        })
+    else:
+        return render_template('sdm_info.html',
+                               picc_data_tag=picc_data_tag,
+                               uid=uid,
+                               read_ctr_num=read_ctr_num,
+                               file_data=file_data,
+                               file_data_utf8=file_data_utf8,
+                               tt_status=tt_status,
+                               tt_color=tt_color)
 
 
 @app.route('/tagtt')
@@ -114,9 +122,16 @@ def sdm_info_plain():
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 
-    return render_template('sdm_info.html',
-                           uid=uid,
-                           read_ctr_num=read_ctr_num)
+
+    if request.args.get("output") == "json":
+        return jsonify({
+            "uid": uid.hex().upper(),
+            "read_ctr": read_ctr_num
+        })
+    else:
+        return render_template('sdm_info.html',
+                               uid=uid,
+                               read_ctr_num=read_ctr_num)
 
 
 if __name__ == '__main__':
