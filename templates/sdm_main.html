@@ -24,5 +24,39 @@ hints"</a></p>
         <code>/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9</code>
     </a></li>
 </ul>
+
+<h2>WebNFC Example</h2>
+<p>Chrome for Android supports NDEF scanning directly through JavaScript (since release 89). You can try it out here:</p>
+
+<button id="scanBtn">Start scan</button>
+
+<div id="scanResult"></div>
+
+<script>
+  log = alert;
+  var scanBtn = document.getElementById('scanBtn');
+
+  scanBtn.addEventListener("click", async () => {
+  try {
+    const ndef = new NDEFReader();
+    await ndef.scan();
+    scanBtn.innerText = "Please tap the tag...";
+    scanBtn.setAttribute('disabled', 'disabled');
+
+    ndef.addEventListener("readingerror", () => {
+      log("Argh! Cannot read data from the NFC tag. Try another one?");
+    });
+
+    ndef.addEventListener("reading", ({ message, serialNumber }) => {
+      var url = new URL(new TextDecoder("utf-8").decode(message.records[0].data));
+      var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
+      var res = await fetch(path);
+      alert(JSON.stringify(await res.json()));
+    });
+  } catch (error) {
+    log("Argh! " + error);
+  }
+});
+</script>
 </body>
 </html>
