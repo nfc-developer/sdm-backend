@@ -1,7 +1,7 @@
 import argparse
 import binascii
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 
 from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM
