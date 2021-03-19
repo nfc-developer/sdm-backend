@@ -51,7 +51,8 @@ hints"</a></p>
       var url = new URL(new TextDecoder("utf-8").decode(message.records[0].data));
       var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
       var res = await fetch(path);
-      alert(JSON.stringify(await res.json()));
+
+      document.getElementById("scanResult").innerText = JSON.stringify(await res.json());
     });
   } catch (error) {
     log("Argh! " + error);
