@@ -13,10 +13,12 @@
 <p>This feature requires HTTPS in order to work properly.</p>
 
 <h2>Scan result</h2>
-<p>Result will appear here.</p>
-<pre id="scanResult"></div>
+<p id="scanAttempt">Result will appear here.</p>
+<code id="scanResult"></div>
 
 <script>
+  var attempt = 0;
+
   log = alert;
   var scanBtn = document.getElementById('scanBtn');
 
@@ -37,9 +39,24 @@
     });
 
     ndef.addEventListener("reading", async ({ message, serialNumber }) => {
+      attempt++;
+      document.getElementById("scanAttempt").innerText = 'Scan attempt: ' + attempt;
+      document.getElementById("scanResult").innerText = 'Contacting server...';
+
       var url = new URL(new TextDecoder("utf-8").decode(message.records[0].data));
       var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
-      var res = await fetch(path);
+
+      try {
+          var res = await fetch(path);
+      } catch (e) {
+          document.getElementById("scanResult").innerText = 'Tag was read succesfully but there was an error when contacting server.';
+          return;
+      }
+
+      if (!res.ok) {
+          document.getElementById("scanResult").innerText = 'Tag was read succesfully but the server returned HTTP ' + res.status;
+          return;
+      }
 
       document.getElementById("scanResult").innerText = JSON.stringify(await res.json(), null, 4);
     });
