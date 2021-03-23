@@ -11,14 +11,8 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 ## Contact
 Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
 
-## Complete solution
-If you are looking for a complete solution for tag configuration and management, check out the demo at [kryptonfc.com](https://kryptonfc.com). This app allows you to:
-
-* Personalize blank NFC tags with just an NFC-enabled Android smartphone (no extra hardware required).
-* Manage the list of your tags in a web panel.
-* View the list of interactions with your tags (each scan is recorded in the table).
-* Configure a simple landing page that is displayed to your users after the tag is scanned.
-* Access the details about particular interaction through an API, directly from your website.
+## Demo
+Check out the demo at [sdm.icedev.pl](https://sdm.icedev.pl/). This server is using blank authentication keys (all-zeros, factory default).
 
 ## How to test?
 ### Manual installation
@@ -74,12 +68,12 @@ http://myserver.example/tagpt?uid=041E3C8A2D6B80&ctr=000006&cmac=4B00064004B0B3D
 
 **Input URL:**
 ```
-http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
 ```
 
 **UID Offset:**
 ```
-http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
                                   ^ UID Offset
 ```
 
@@ -87,20 +81,20 @@ i.e.: in TagWriter, set the cursor between `uid=` and the first `0` when setting
 
 **Counter Offset:**
 ```
-http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
                                                      ^ Counter Offset
 ```
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
-http://myserver.example/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
                                                                  ^ CMAC Offset
 ```
 
 ### PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
 **Example:**
 ```
-http://myserver.example/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
+https://sdm.icedev.pl/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
 ```
   
 **Proposed SDM Settings for TagWriter:**
@@ -112,12 +106,12 @@ http://myserver.example/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EE
 
 **Input URL:**
 ```
-http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
 ```
 
 **PICCDataOffset:**
 ```
-http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
                                       ^ PICCDataOffset
 ```
 
@@ -125,7 +119,7 @@ i.e.: in TagWriter, set the cursor between `=` and the first `0` when setting of
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
-http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
                                                                             ^ SDMMACInputOffset/SDMMACOffset
 ```
 
@@ -133,7 +127,7 @@ http://myserver.example/tag?picc_data=00000000000000000000000000000000&cmac=0000
 
 **Example:**
 ```
-http://myserver.example/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
+https://sdm.icedev.pl/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
 ```
   
 **Proposed SDM Settings for TagWriter:**
@@ -153,7 +147,7 @@ In this case, TT Status Offset should be equal Enc Data Offset.
 
 **Example:**
 ```
-http://myserver.example/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
+https://sdm.icedev.pl/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
 ```
 
 First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - loop closed, `O` - loop open, `I` - TagTamper not enabled yet).
