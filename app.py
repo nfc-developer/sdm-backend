@@ -73,9 +73,12 @@ def _internal_sdm(with_tt=False):
             elif tt_perm_status == 'O' and tt_cur_status == 'O':
                 tt_status = 'Tampered! (loop open)'
                 tt_color = 'red'
+            elif tt_perm_status == 'I' and tt_cur_status == 'I':
+                tt_status = 'Not initialized'
+                tt_color = 'orange'
             else:
                 tt_status = 'Unknown'
-                tt_color = 'yellow'
+                tt_color = 'orange'
 
     if request.args.get("output") == "json":
         return jsonify({
