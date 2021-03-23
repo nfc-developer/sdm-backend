@@ -74,7 +74,7 @@ https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
 **UID Offset:**
 ```
 https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                  ^ UID Offset
+                                ^ UID Offset
 ```
 
 i.e.: in TagWriter, set the cursor between `uid=` and the first `0` when setting offset.
@@ -82,13 +82,13 @@ i.e.: in TagWriter, set the cursor between `uid=` and the first `0` when setting
 **Counter Offset:**
 ```
 https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                                     ^ Counter Offset
+                                                   ^ Counter Offset
 ```
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
 https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                                                 ^ CMAC Offset
+                                                               ^ CMAC Offset
 ```
 
 ### PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
@@ -112,7 +112,7 @@ https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=000000
 **PICCDataOffset:**
 ```
 https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
-                                      ^ PICCDataOffset
+                                    ^ PICCDataOffset
 ```
 
 i.e.: in TagWriter, set the cursor between `=` and the first `0` when setting offset.
@@ -120,7 +120,7 @@ i.e.: in TagWriter, set the cursor between `=` and the first `0` when setting of
 **SDMMACInputOffset/SDMMACOffset:**
 ```
 https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
-                                                                            ^ SDMMACInputOffset/SDMMACOffset
+                                                                          ^ SDMMACInputOffset/SDMMACOffset
 ```
 
 ### SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
