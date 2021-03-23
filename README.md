@@ -12,7 +12,7 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
 
 ## Demo
-Check out the demo at [sdm.icedev.pl](https://sdm.icedev.pl/). This server is using blank authentication keys (all-zeros, factory default).
+Check out the demo at [sdm.icedev.pl](https://sdm.icedev.pl/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
 
 ## How to test?
 ### Manual installation
