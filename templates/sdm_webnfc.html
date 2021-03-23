@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <title>SDM Endpoint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1>Secure Dynamic Messaging Backend Server Example</h1>
+<h2>WebNFC Example</h2>
+<p>Chrome for Android supports NDEF scanning directly through JavaScript (since release 89). You can try it out here:</p>
+
+<button id="scanBtn" style="font-size: 24px; font-weight: bold;">Start scan</button>
+
+<p>This feature requires HTTPS in order to work properly.</p>
+
+<h2>Scan result</h2>
+<p>Result will appear here.</p>
+<pre id="scanResult"></div>
+
+<script>
+  log = alert;
+  var scanBtn = document.getElementById('scanBtn');
+
+  if (!("NDEFReader" in window)) {
+    scanBtn.innerText = "NDEFReader not available";
+    scanBtn.setAttribute('disabled', 'disabled');
+  }
+
+  scanBtn.addEventListener("click", async () => {
+  try {
+    const ndef = new NDEFReader();
+    await ndef.scan();
+    scanBtn.innerText = "Please tap the tag...";
+    scanBtn.setAttribute('disabled', 'disabled');
+
+    ndef.addEventListener("readingerror", () => {
+      log("Argh! Cannot read data from the NFC tag. Try another one?");
+    });
+
+    ndef.addEventListener("reading", async ({ message, serialNumber }) => {
+      var url = new URL(new TextDecoder("utf-8").decode(message.records[0].data));
+      var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
+      var res = await fetch(path);
+
+      document.getElementById("scanResult").innerText = JSON.stringify(await res.json(), null, 4);
+    });
+  } catch (error) {
+    log("Argh! " + error);
+  }
+});
+</script>
+</body>
+</html>

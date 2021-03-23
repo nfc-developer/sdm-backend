@@ -134,6 +134,11 @@ def sdm_info_plain():
                                read_ctr_num=read_ctr_num)
 
 
+@app.route('/webnfc')
+def sdm_webnfc():
+    return render_template('sdm_webnfc.html')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='OTA NFC Server')
     parser.add_argument('--host', type=str, nargs='?',
