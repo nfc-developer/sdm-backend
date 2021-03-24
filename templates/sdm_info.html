@@ -1,12 +1,7 @@
-<html lang="en">
-<head>
-    <title>SDM Endpoint</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-</head>
-<body>
-    <h1>Secure Dynamic Messaging Backend Server Demo</h1>
-    <p><a href="/">Get back to the main page</a></p>
+{% extends "_layout.html" %}
 
+{% block content %}
+    <h1>Secure Dynamic Messaging Backend Server Demo</h1>
     <p>
         <strong style="color: green;">Cryptographic signature validated.</strong>
     </p>
@@ -25,5 +20,8 @@
             {% endif %}
         {% endif %}
     </p>
-</body>
-</html>
+    <hr>
+    <p>
+        <a href="/">Back to the main page</a>
+    </p>
+{% endblock %}
