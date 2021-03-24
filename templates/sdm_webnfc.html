@@ -1,22 +1,17 @@
-<html lang="en">
-<head>
-    <title>SDM Endpoint</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<h1>Secure Dynamic Messaging Backend Server Example</h1>
-<p><a href="/">Get back to the main page</a></p>
+{% extends "_layout.html" %}
 
+{% block content %}
+<h1>Secure Dynamic Messaging Backend Server Example</h1>
 <h2>WebNFC Example</h2>
 <p>Chrome for Android supports NDEF scanning directly through JavaScript (since release 89). You can try it out here:</p>
 
-<button id="scanBtn" style="font-size: 24px; font-weight: bold;">Start scan</button>
+<button id="scanBtn" style="font-size: 24px; font-weight: bold;" class="btn btn-primary">Start scan</button>
 
-<p>This feature requires HTTPS in order to work properly.</p>
+<p class="mt-3">This feature requires HTTPS in order to work properly.</p>
 
 <h2>Scan result</h2>
 <p id="scanAttempt">Result will appear here.</p>
-<code id="scanResult"></div>
+<code id="scanResult"></code>
 
 <script>
   var attempt = 0;
@@ -67,5 +62,7 @@
   }
 });
 </script>
-</body>
-</html>
+
+<hr>
+<a href="/">Back to the main page</a>
+{% endblock %}

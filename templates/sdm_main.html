@@ -1,12 +1,9 @@
-<html lang="en">
-<head>
-    <title>SDM Endpoint</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+{% extends "_layout.html" %}
+
+{% block content %}
 <h1>Secure Dynamic Messaging Backend Server Example</h1>
-<p>Some of the examples below were taken from <a href="https://www.nxp.com/docs/en/application-note/AN12196.pdf">AN12196: "NTAG 424 DNA and NTAG 424 DNA TagTamper features and
-hints"</a></p>
+<p>Some of the example SDM values below were taken from <a href="https://www.nxp.com/docs/en/application-note/AN12196.pdf">AN12196: "NTAG 424 DNA and NTAG 424 DNA TagTamper features and
+hints"</a>.</p>
 <ul>
     <li><strong>NTAG 424 DNA:</strong> Plaintext tag UID, read counter mirroring with SDMMAC (CMAC)<br>
         <a href="/tagpt?uid=041E3C8A2D6B80&ctr=000006&cmac=4B00064004B0B3D3">
@@ -26,9 +23,5 @@ hints"</a></p>
     </a><br><br></li>
     <li><a href="/webnfc"><strong>WebNFC</strong> Example: Reading tags directly from Chrome using WebNFC feature</a></li>
 </ul>
+{% endblock %}
 
-<p>
-    Source code: <a href="https://github.com/icedevml/sdm-backend">https://github.com/icedevml/sdm-backend</a>
-</p>
-</body>
-</html>
