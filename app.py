@@ -10,6 +10,21 @@ from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage
 app = Flask(__name__)
 
 
+@app.errorhandler(400)
+def bad_request(e):
+    return render_template('error.html', code=400, msg=str(e)), 400
+
+
+@app.errorhandler(403)
+def bad_request(e):
+    return render_template('error.html', code=403, msg=str(e)), 403
+
+
+@app.errorhandler(404)
+def bad_request(e):
+    return render_template('error.html', code=404, msg=str(e)), 404
+
+
 @app.route('/')
 def sdm_main():
     """
