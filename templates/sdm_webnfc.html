@@ -7,11 +7,15 @@
 
 <button id="scanBtn" style="font-size: 24px; font-weight: bold;" class="btn btn-primary">Start scan</button>
 
-<p class="mt-3">This feature requires HTTPS in order to work properly.</p>
+<p class="mt-3">This feature requires HTTPS in order to work properly. This demo will simply read the first NDEF record and interpret it as URL.</p>
 
 <h2>Scan result</h2>
-<p id="scanAttempt">Result will appear here.</p>
-<code id="scanResult"></code>
+<p id="scanAttempt">Scan attempt: 0</p>
+<div class="card">
+<div class="card-body">
+    <code id="scanResult">(Scan result will appear here)</code>
+</div>
+</div>
 
 <script>
   var attempt = 0;
@@ -32,30 +36,30 @@
     scanBtn.setAttribute('disabled', 'disabled');
 
     ndef.addEventListener("readingerror", () => {
-      log("Argh! Cannot read data from the NFC tag. Try another one?");
+      ++attempt;
+      document.getElementById("scanAttempt").innerText = 'Scan attempt: ' + attempt;
+      document.getElementById("scanResult").innerHTML = '(Failed to read NDEF data from the tag. Please try again or try different tag.)';
     });
 
     ndef.addEventListener("reading", async ({ message, serialNumber }) => {
-      attempt++;
+      ++attempt;
       document.getElementById("scanAttempt").innerText = 'Scan attempt: ' + attempt;
-      document.getElementById("scanResult").innerText = 'Contacting server...';
 
-      var url = new URL(new TextDecoder("utf-8").decode(message.records[0].data));
-      var path = url.pathname + "?" + url.searchParams.toString() + "&output=json";
+      let ndef_url;
 
       try {
-          var res = await fetch(path);
+	  ndef_url = new TextDecoder("utf-8").decode(message.records[0].data);
       } catch (e) {
-          document.getElementById("scanResult").innerText = 'Tag was read succesfully but there was an error when contacting server.';
+          document.getElementById("scanResult").innerHTML = '(Error when parsing NDEF data: ' + e + '. Please try again or try different tag.)';
           return;
       }
 
-      if (!res.ok) {
-          document.getElementById("scanResult").innerText = 'Tag was read succesfully but the server returned HTTP ' + res.status;
-          return;
-      }
+      let ah = document.createElement("a");
+      ah.href = ndef_url;
+      ah.innerText = ndef_url;
 
-      document.getElementById("scanResult").innerText = JSON.stringify(await res.json(), null, 4);
+      document.getElementById("scanResult").innerHTML = '';
+      document.getElementById("scanResult").appendChild(ah);
     });
   } catch (error) {
     log("Argh! " + error);
