@@ -11,3 +11,5 @@ UID_PARAM = os.environ.get("UID_PARAM", "uid")
 CTR_PARAM = os.environ.get("CTR_PARAM", "ctr")
 
 SDMMAC_PARAM = os.environ.get("SDMMAC_PARAM", "cmac")
+
+REQUIRE_LRP = (os.environ.get("REQUIRE_LRP", "0") == "1")

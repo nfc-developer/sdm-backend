@@ -121,3 +121,17 @@ def test_sdm_lrp1():
     assert res['read_ctr'] == 4
     assert res['file_data'] == b"NTXXb7dz3PsYYBlU"
     assert res['encryption_mode'] == EncMode.LRP
+
+
+def test_sdm_lrp2():
+    res = decrypt_sun_message(
+        sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
+        sdm_file_read_key=binascii.unhexlify('00000000000000000000000000000000'),
+        picc_enc_data=binascii.unhexlify("1FCBE61B3E4CAD980CBFDD333E7A4AC4A579569BAFD22C5F"),
+        sdmmac=binascii.unhexlify("4231608BA7B02BA9"))
+
+    assert res['picc_data_tag'] == b"\xc7"
+    assert res['uid'] == binascii.unhexlify("04940e2a2f7080")
+    assert res['read_ctr'] == 3
+    assert res['file_data'] is None
+    assert res['encryption_mode'] == EncMode.LRP
