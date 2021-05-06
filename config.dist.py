@@ -11,3 +11,6 @@ CTR_PARAM = "ctr"
 
 # always applied
 SDMMAC_PARAM = "cmac"
+
+# accept only SDM using LRP, disallow usage of AES
+REQUIRE_LRP = False

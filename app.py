@@ -4,8 +4,8 @@ import binascii
 from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 
-from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM
-from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage
+from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
+from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode
 
 app = Flask(__name__)
 
@@ -65,6 +65,9 @@ def _internal_sdm(with_tt=False):
                                   enc_file_data=enc_file_data_b)
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
+
+    if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
+        raise BadRequest("Invalid encryption mode, expected LRP.")
 
     picc_data_tag = res['picc_data_tag']
     uid = res['uid']
@@ -145,6 +148,9 @@ def sdm_info_plain():
                                  sdm_file_read_key=SDM_FILE_READ_KEY)
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
+
+    if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
+        raise BadRequest("Invalid encryption mode, expected LRP.")
 
     if request.args.get("output") == "json":
         return jsonify({
