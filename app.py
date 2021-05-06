@@ -104,7 +104,8 @@ def _internal_sdm(with_tt=False):
             "uid": uid.hex().upper(),
             "file_data": file_data_utf8,
             "read_ctr": read_ctr_num,
-            "tt_status": tt_status
+            "tt_status": tt_status,
+            "enc_mode": encryption_mode
         })
     else:
         return render_template('sdm_info.html',
@@ -148,7 +149,8 @@ def sdm_info_plain():
     if request.args.get("output") == "json":
         return jsonify({
             "uid": res['uid'].hex().upper(),
-            "read_ctr": res['read_ctr']
+            "read_ctr": res['read_ctr'],
+            "enc_mode": res['encryption_mode'].name
         })
     else:
         return render_template('sdm_info.html',
