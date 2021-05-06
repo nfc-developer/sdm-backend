@@ -66,7 +66,11 @@ def _internal_sdm(with_tt=False):
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 
-    picc_data_tag, uid, read_ctr_num, file_data = res
+    picc_data_tag = res['picc_data_tag']
+    uid = res['uid']
+    read_ctr_num = res['read_ctr']
+    file_data = res['file_data']
+    encryption_mode = res['encryption_mode'].name
 
     file_data_utf8 = ""
     tt_status = ""
@@ -104,6 +108,7 @@ def _internal_sdm(with_tt=False):
         })
     else:
         return render_template('sdm_info.html',
+                               encryption_mode=encryption_mode,
                                picc_data_tag=picc_data_tag,
                                uid=uid,
                                read_ctr_num=read_ctr_num,
@@ -133,23 +138,23 @@ def sdm_info_plain():
         raise BadRequest("Failed to decode parameters.")
 
     try:
-        uid, read_ctr_num = validate_plain_sun(uid=uid,
-                                               read_ctr=read_ctr,
-                                               sdmmac=cmac,
-                                               sdm_file_read_key=SDM_FILE_READ_KEY)
+        res = validate_plain_sun(uid=uid,
+                                 read_ctr=read_ctr,
+                                 sdmmac=cmac,
+                                 sdm_file_read_key=SDM_FILE_READ_KEY)
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 
-
     if request.args.get("output") == "json":
         return jsonify({
-            "uid": uid.hex().upper(),
-            "read_ctr": read_ctr_num
+            "uid": res['uid'].hex().upper(),
+            "read_ctr": res['read_ctr']
         })
     else:
         return render_template('sdm_info.html',
-                               uid=uid,
-                               read_ctr_num=read_ctr_num)
+                               encryption_mode=res['encryption_mode'].name,
+                               uid=res['uid'],
+                               read_ctr_num=res['read_ctr'])
 
 
 @app.route('/webnfc')

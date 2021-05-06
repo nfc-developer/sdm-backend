@@ -6,16 +6,21 @@
         <strong style="color: green;">Cryptographic signature validated.</strong>
     </p>
     <p>
+        {% if encryption_mode == "LRP" %}
+        <strong style="color: green;">Encryption mode: {{ encryption_mode }}</strong><br>
+        {% else %}
+        Encryption mode: {{ encryption_mode }}<br>
+        {% endif %}
         {% if picc_data_tag %}
         PICC Data Tag: <code>{{ picc_data_tag.hex() }}</code><br>
-	{% endif %}
+        {% endif %}
         NFC TAG UID: <code>{{ uid.hex() }}</code><br>
         Read counter: <code>{{ read_ctr_num }}</code><br>
         {% if file_data %}
         File data (hex): <code>{{ file_data.hex() }}</code><br>
         File data (UTF-8): <code>{{ file_data_utf8 }}</code><br>
             {% if tt_status %}
-	    Tamper Status: <strong style="color: {{ tt_color }};">{{ tt_status }}</strong><br>
+            Tamper Status: <strong style="color: {{ tt_color }};">{{ tt_status }}</strong><br>
             (Assuming that "Tamper Status" is stored in the first two bytes of "File data")
             {% endif %}
         {% endif %}
