@@ -12,7 +12,7 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
 
 ## Demo
-Check out the demo at [sdm.icedev.pl](https://sdm.icedev.pl/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
+Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
 
 ## How to test?
 ### Manual installation
@@ -68,33 +68,33 @@ http://myserver.example/tagpt?uid=041E3C8A2D6B80&ctr=000006&cmac=4B00064004B0B3D
 
 **Input URL:**
 ```
-https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+https://sdm.nfcdeveloper.com/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
 ```
 
 **UID Offset:**
 ```
-https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                ^ UID Offset
+https://sdm.nfcdeveloper.com/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                                                      ^ UID Offset
 ```
 
 i.e.: in TagWriter, set the cursor between `uid=` and the first `0` when setting offset.
 
 **Counter Offset:**
 ```
-https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                                   ^ Counter Offset
+https://sdm.nfcdeveloper.com/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                                                      ^ Counter Offset
 ```
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
-https://sdm.icedev.pl/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
-                                                               ^ CMAC Offset
+https://sdm.nfcdeveloper.com/tagpt?uid=00000000000000&ctr=000000&cmac=0000000000000000
+                                                                      ^ CMAC Offset
 ```
 
 ### PICCData Encrypted mirroring (`CMACInputOffset == CMACOffset`)
 **Example:**
 ```
-https://sdm.icedev.pl/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
+https://sdm.nfcdeveloper.com/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9EE65337086
 ```
   
 **Proposed SDM Settings for TagWriter:**
@@ -106,28 +106,28 @@ https://sdm.icedev.pl/tag?picc_data=EF963FF7828658A599F3041510671E88&cmac=94EED9
 
 **Input URL:**
 ```
-https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+https://sdm.nfcdeveloper.com/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
 ```
 
 **PICCDataOffset:**
 ```
-https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
-                                    ^ PICCDataOffset
+https://sdm.nfcdeveloper.com/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+                                           ^ PICCDataOffset
 ```
 
 i.e.: in TagWriter, set the cursor between `=` and the first `0` when setting offset.
 
 **SDMMACInputOffset/SDMMACOffset:**
 ```
-https://sdm.icedev.pl/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
-                                                                          ^ SDMMACInputOffset/SDMMACOffset
+https://sdm.nfcdeveloper.com/tag?picc_data=00000000000000000000000000000000&cmac=0000000000000000
+                                                                                 ^ SDMMACInputOffset/SDMMACOffset
 ```
 
 ### SDMENCFileData mirror with PICCData Encrypted mirroring (must satisfy: `CMACInputOffset != CMACOffset && SDMMACInputOffset == ENCDataOffset`)
 
 **Example:**
 ```
-https://sdm.icedev.pl/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
+https://sdm.nfcdeveloper.com/tag?picc_data=FD91EC264309878BE6345CBE53BADF40&enc=CEE9A53E3E463EF1F459635736738962&cmac=ECC1E7F6C6C73BF6
 ```
   
 **Proposed SDM Settings for TagWriter:**
@@ -147,7 +147,7 @@ In this case, TT Status Offset should be equal Enc Data Offset.
 
 **Example:**
 ```
-https://sdm.icedev.pl/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
+https://sdm.nfcdeveloper.com/tagtt?picc_data=FDD387BF32A33A7C40CF259675B3A1E2&enc=EA050C282D8E9043E28F7A171464D697&cmac=758110182134ECE9
 ```
 
 First two letters of `File data (UTF-8)` will describe TagTamper Status (`C` - loop closed, `O` - loop open, `I` - TagTamper not enabled yet).
