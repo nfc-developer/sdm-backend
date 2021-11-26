@@ -9,7 +9,7 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 *Note: This GitHub project is not affiliated with NXP B.V. in any way. Product names are mentioned here in order to inform about compatibility.*
 
 ## Contact
-Feel free to reach me at ml@icedev.pl if you have any questions concerning this topic.
+Feel free to reach me at mike@nfcdeveloper.com if you have any questions concerning this topic.
 
 ## Demo
 Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
@@ -172,6 +172,6 @@ In general, SDMs generated with LRP cipher are not supported by this code. See [
 
 ## Authors
 
-* Michał Leszczyński (ml@icedev.pl)
+* Michał Leszczyński (mike@nfcdeveloper.com)
 
 Feel free to contact if you have any questions.
