@@ -43,10 +43,12 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
 5. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
 ### Using Docker
-1. Run
+1. Launch sdm-backend on port 5000:
    ```
-   # launch sdm-backend on port 5000
-   docker run -p 5000:80 -e SDM_MASTER_KEY=00000000000000000000000000000000 icedevml/sdm-backend:build20220111
+   docker run \
+       -p 5000:80 \
+       -e SDM_MASTER_KEY=00000000000000000000000000000000 \
+       icedevml/sdm-backend:build20220111
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
