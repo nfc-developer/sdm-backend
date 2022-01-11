@@ -4,7 +4,8 @@ import binascii
 from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 
-from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
+from derive import derive_tag_key, derive_undiversified_key
+from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_MASTER_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
 from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode
 
 app = Flask(__name__)
@@ -58,8 +59,8 @@ def _internal_sdm(with_tt=False):
         raise BadRequest("Failed to decode parameters.")
 
     try:
-        res = decrypt_sun_message(sdm_meta_read_key=SDM_META_READ_KEY,
-                                  sdm_file_read_key=SDM_FILE_READ_KEY,
+        res = decrypt_sun_message(sdm_meta_read_key=derive_undiversified_key(SDM_MASTER_KEY, 1),
+                                  sdm_file_read_key=lambda uid: derive_tag_key(SDM_MASTER_KEY, uid, 2),
                                   picc_enc_data=enc_picc_data_b,
                                   sdmmac=sdmmac_b,
                                   enc_file_data=enc_file_data_b)
@@ -145,7 +146,7 @@ def sdm_info_plain():
         res = validate_plain_sun(uid=uid,
                                  read_ctr=read_ctr,
                                  sdmmac=cmac,
-                                 sdm_file_read_key=SDM_FILE_READ_KEY)
+                                 sdm_file_read_key=derive_tag_key(SDM_MASTER_KEY, uid, 2))
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 
