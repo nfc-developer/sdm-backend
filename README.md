@@ -11,6 +11,9 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 ## Contact
 Feel free to reach me at mike@nfcdeveloper.com if you have any questions concerning this topic.
 
+## How to configure the tags?
+We suggest using [NFC Developer App](https://nfcdeveloper.com/tag-app/tutorial/) for Android/iOS in order to configure the tags. This application will do most things "under the hood" and your tags will work out-of-the-box with this project.
+
 ## Demo
 Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
 
@@ -48,9 +51,6 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
    docker run -p 5000:80 icedevml/sdm-backend
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
-
-## How to setup SDM?
-(TODO check out app)
 
 ## Authors
 
