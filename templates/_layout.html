@@ -4,6 +4,7 @@
         <title>SDM Endpoint</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	{% if demo_mode %}
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-6FS197PR54"></script>
 	<script>
@@ -13,6 +14,7 @@
 
   gtag('config', 'G-6FS197PR54');
 	</script>
+	{% endif %}
     </head>
     <body>
         <div class="container mt-2 mb-2">
@@ -20,13 +22,23 @@
 
             {% block footer %}
             <div class="mt-2">
+                {% if demo_mode %}
                 <div class="alert alert-info">
                     Source code: <a href="https://github.com/icedevml/sdm-backend">https://github.com/icedevml/sdm-backend</a>
                 </div>
 
                 <div class="alert alert-success">
-                    Do you want to use NFC technology in your project? Not sure how to do it? Send me an email: <a href="mailto:ml@icedev.pl">ml@icedev.pl</a>
+                    Do you want to use SDM in your project? Not sure how to do it? Fill out the <strong><a href="https://nfcdeveloper.com/contact/">contact form</a></strong> or please drop me a short e-mail at <a href="mailto:mike@nfcdeveloper.com">mike@nfcdeveloper.com</a>
                 </div>
+		{% endif %}
+
+		<hr>
+
+		<p class="text-muted">
+		Powered by ITSEC R&amp;D Company
+		</p>
+
+		<a href="https://itsecrnd.com/"><img src="https://itsecrnd.com/itsecrnd.svg" style="width: 15em;" alt="ITSEC RND Company Logo"></a>
             </div>
             {% endblock %}
         </div>

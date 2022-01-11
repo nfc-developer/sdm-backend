@@ -1,5 +1,8 @@
-SDM_META_READ_KEY = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-SDM_FILE_READ_KEY = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+import binascii
+
+
+# used for derivation of per-tag keys
+SDM_MASTER_KEY = binascii.unhexlify("00000000000000000000000000000000")
 
 # for encrypted mirroring
 ENC_PICC_DATA_PARAM = "picc_data"

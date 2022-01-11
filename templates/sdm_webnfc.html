@@ -1,6 +1,7 @@
 {% extends "_layout.html" %}
 
 {% block content %}
+{% if demo_mode %}
 <h1>Secure Dynamic Messaging Backend Server Example</h1>
 <h2>WebNFC Example</h2>
 <p>Chrome for Android supports NDEF scanning directly through JavaScript (since release 89). You can try it out here:</p>
@@ -69,4 +70,7 @@
 
 <hr>
 <a href="/">Back to the main page</a>
+{% else %}
+<p>This feature is disabled.</p>
+{% endif %}
 {% endblock %}
