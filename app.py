@@ -118,7 +118,7 @@ def _internal_sdm(with_tt=False, force_json=False):
     if request.args.get("output") == "json" or force_json:
         return jsonify({
             "uid": uid.hex().upper(),
-            "file_data": file_data.hex(),
+            "file_data": file_data.hex() if file_data else None,
             "read_ctr": read_ctr_num,
             "tt_status": tt_status_api,
             "enc_mode": encryption_mode
@@ -142,7 +142,10 @@ def sdm_info_tt():
 
 @app.route('/api/tagtt')
 def sdm_api_info_tt():
-    return _internal_sdm(with_tt=True, force_json=True)
+    try:
+        return _internal_sdm(with_tt=True, force_json=True)
+    except BadRequest as e:
+        return jsonify({"error": str(e)})
 
 
 @app.route('/tag')
@@ -152,11 +155,13 @@ def sdm_info():
 
 @app.route('/api/tag')
 def sdm_api_info():
-    return _internal_sdm(with_tt=False, force_json=True)
+    try:
+        return _internal_sdm(with_tt=False, force_json=True)
+    except BadRequest as e:
+        return jsonify({"error": str(e)})
 
 
-@app.route('/tagpt')
-def sdm_info_plain():
+def _internal_tagpt(force_json=False):
     try:
         uid = binascii.unhexlify(request.args[UID_PARAM])
         read_ctr = binascii.unhexlify(request.args[CTR_PARAM])
@@ -175,7 +180,7 @@ def sdm_info_plain():
     if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
         raise BadRequest("Invalid encryption mode, expected LRP.")
 
-    if request.args.get("output") == "json":
+    if request.args.get("output") == "json" or force_json:
         return jsonify({
             "uid": res['uid'].hex().upper(),
             "read_ctr": res['read_ctr'],
@@ -186,6 +191,19 @@ def sdm_info_plain():
                                encryption_mode=res['encryption_mode'].name,
                                uid=res['uid'],
                                read_ctr_num=res['read_ctr'])
+
+
+@app.route('/tagpt')
+def sdm_info_plain():
+    return _internal_tagpt()
+
+
+@app.route('/api/tagpt')
+def sdm_api_info_plain():
+    try:
+        return _internal_tagpt(force_json=True)
+    except BadRequest as e:
+        return jsonify({"error": str(e)}), 400
 
 
 @app.route('/webnfc')
