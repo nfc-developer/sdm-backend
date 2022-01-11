@@ -46,10 +46,11 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
 1. Run
    ```
    # launch sdm-backend on port 5000
-   docker run -p 5000:80 -e SDM_MASTER_KEY=YOUR_MASTER_KEY icedevml/sdm-backend:build20220111
+   docker run -p 5000:80 -e SDM_MASTER_KEY=00000000000000000000000000000000 icedevml/sdm-backend:build20220111
    ```
-   Replace `YOUR_MASTER_KEY` with a 32 hex digit master key, for testing use `00000000000000000000000000000000`.
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
+
+Note: If you are running production instance, the `SDM_MASTER_KEY` should be an unique 16 byte value (hex encoded). However, all-zeros key is perfectly fine for testing.
 
 ## Authors
 
