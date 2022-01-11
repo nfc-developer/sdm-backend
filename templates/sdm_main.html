@@ -1,7 +1,8 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-<h1>Secure Dynamic Messaging Backend Server Example</h1>
+<h1>Secure Dynamic Messaging Backend Server{% if demo_mode %} Example{% endif %}</h1>
+{% if demo_mode %}
 <p>Some of the example SDM values below were taken from <a href="https://www.nxp.com/docs/en/application-note/AN12196.pdf">AN12196: "NTAG 424 DNA and NTAG 424 DNA TagTamper features and
 hints"</a>.</p>
 <ul>
@@ -31,4 +32,5 @@ hints"</a>.</p>
     </a><br><br></li>
     <li><a href="/webnfc"><strong>WebNFC</strong> Example: Reading tags directly from Chrome using WebNFC feature</a></li>
 </ul>
+{% endif %}
 {% endblock %}

@@ -26,6 +26,12 @@ def bad_request(e):
     return render_template('error.html', code=404, msg=str(e)), 404
 
 
+@app.context_processor
+def inject_demo_mode():
+    demo_mode = (SDM_MASTER_KEY == (b"\x00" * 16))
+    return {"demo_mode": demo_mode}
+
+
 @app.route('/')
 def sdm_main():
     """
@@ -34,7 +40,7 @@ def sdm_main():
     return render_template('sdm_main.html')
 
 
-def _internal_sdm(with_tt=False):
+def _internal_sdm(with_tt=False, force_json=False):
     """
     SUN decrypting/validating endpoint.
     """
@@ -77,6 +83,7 @@ def _internal_sdm(with_tt=False):
     encryption_mode = res['encryption_mode'].name
 
     file_data_utf8 = ""
+    tt_status_api = ""
     tt_status = ""
     tt_color = ""
 
@@ -88,27 +95,32 @@ def _internal_sdm(with_tt=False):
             tt_cur_status = file_data_utf8[1]
 
             if tt_perm_status == 'C' and tt_cur_status == 'C':
+                tt_status_api = 'secure'
                 tt_status = 'OK (not tampered)'
                 tt_color = 'green'
             elif tt_perm_status == 'O' and tt_cur_status == 'C':
+                tt_status_api = 'tampered_closed'
                 tt_status = 'Tampered! (loop closed)'
                 tt_color = 'red'
             elif tt_perm_status == 'O' and tt_cur_status == 'O':
+                tt_status_api = 'tampered_open'
                 tt_status = 'Tampered! (loop open)'
                 tt_color = 'red'
             elif tt_perm_status == 'I' and tt_cur_status == 'I':
+                tt_status_api = 'not_initialized'
                 tt_status = 'Not initialized'
                 tt_color = 'orange'
             else:
+                tt_status_api = 'unknown'
                 tt_status = 'Unknown'
                 tt_color = 'orange'
 
-    if request.args.get("output") == "json":
+    if request.args.get("output") == "json" or force_json:
         return jsonify({
             "uid": uid.hex().upper(),
-            "file_data": file_data_utf8,
+            "file_data": file_data.hex(),
             "read_ctr": read_ctr_num,
-            "tt_status": tt_status,
+            "tt_status": tt_status_api,
             "enc_mode": encryption_mode
         })
     else:
@@ -128,9 +140,19 @@ def sdm_info_tt():
     return _internal_sdm(with_tt=True)
 
 
+@app.route('/api/tagtt')
+def sdm_api_info_tt():
+    return _internal_sdm(with_tt=True, force_json=True)
+
+
 @app.route('/tag')
 def sdm_info():
     return _internal_sdm(with_tt=False)
+
+
+@app.route('/api/tag')
+def sdm_api_info():
+    return _internal_sdm(with_tt=False, force_json=True)
 
 
 @app.route('/tagpt')
