@@ -45,11 +45,10 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
 ### Using Docker
 1. Run
    ```
-   # remove old image to ensure you will have the latest version
-   docker rmi -f icedevml/sdm-backend
    # launch sdm-backend on port 5000
-   docker run -p 5000:80 icedevml/sdm-backend
+   docker run -p 5000:80 -e SDM_MASTER_KEY=YOUR_MASTER_KEY icedevml/sdm-backend:build20220111
    ```
+   Replace `YOUR_MASTER_KEY` with a 32 hex digit master key, for testing use `00000000000000000000000000000000`.
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
 ## Authors
