@@ -25,8 +25,11 @@
             {% endif %}
         {% endif %}
     </p>
+    <p><a href="/api{{ request.full_path }}">Display validation output as JSON</a> (suitable for integration with other software)</p>
+    {% if demo_mode %}
     <hr>
     <p>
         <a href="/">Back to the main page</a>
     </p>
+    {% endif %}
 {% endblock %}

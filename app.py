@@ -4,7 +4,8 @@ import binascii
 from flask import Flask, request, render_template, jsonify
 from werkzeug.exceptions import BadRequest
 
-from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_FILE_READ_KEY, SDM_META_READ_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
+from derive import derive_tag_key, derive_undiversified_key
+from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_MASTER_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
 from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode
 
 app = Flask(__name__)
@@ -25,6 +26,12 @@ def bad_request(e):
     return render_template('error.html', code=404, msg=str(e)), 404
 
 
+@app.context_processor
+def inject_demo_mode():
+    demo_mode = (SDM_MASTER_KEY == (b"\x00" * 16))
+    return {"demo_mode": demo_mode}
+
+
 @app.route('/')
 def sdm_main():
     """
@@ -33,7 +40,7 @@ def sdm_main():
     return render_template('sdm_main.html')
 
 
-def _internal_sdm(with_tt=False):
+def _internal_sdm(with_tt=False, force_json=False):
     """
     SUN decrypting/validating endpoint.
     """
@@ -58,8 +65,8 @@ def _internal_sdm(with_tt=False):
         raise BadRequest("Failed to decode parameters.")
 
     try:
-        res = decrypt_sun_message(sdm_meta_read_key=SDM_META_READ_KEY,
-                                  sdm_file_read_key=SDM_FILE_READ_KEY,
+        res = decrypt_sun_message(sdm_meta_read_key=derive_undiversified_key(SDM_MASTER_KEY, 1),
+                                  sdm_file_read_key=lambda uid: derive_tag_key(SDM_MASTER_KEY, uid, 2),
                                   picc_enc_data=enc_picc_data_b,
                                   sdmmac=sdmmac_b,
                                   enc_file_data=enc_file_data_b)
@@ -76,6 +83,7 @@ def _internal_sdm(with_tt=False):
     encryption_mode = res['encryption_mode'].name
 
     file_data_utf8 = ""
+    tt_status_api = ""
     tt_status = ""
     tt_color = ""
 
@@ -87,27 +95,32 @@ def _internal_sdm(with_tt=False):
             tt_cur_status = file_data_utf8[1]
 
             if tt_perm_status == 'C' and tt_cur_status == 'C':
+                tt_status_api = 'secure'
                 tt_status = 'OK (not tampered)'
                 tt_color = 'green'
             elif tt_perm_status == 'O' and tt_cur_status == 'C':
+                tt_status_api = 'tampered_closed'
                 tt_status = 'Tampered! (loop closed)'
                 tt_color = 'red'
             elif tt_perm_status == 'O' and tt_cur_status == 'O':
+                tt_status_api = 'tampered_open'
                 tt_status = 'Tampered! (loop open)'
                 tt_color = 'red'
             elif tt_perm_status == 'I' and tt_cur_status == 'I':
+                tt_status_api = 'not_initialized'
                 tt_status = 'Not initialized'
                 tt_color = 'orange'
             else:
+                tt_status_api = 'unknown'
                 tt_status = 'Unknown'
                 tt_color = 'orange'
 
-    if request.args.get("output") == "json":
+    if request.args.get("output") == "json" or force_json:
         return jsonify({
             "uid": uid.hex().upper(),
-            "file_data": file_data_utf8,
+            "file_data": file_data.hex(),
             "read_ctr": read_ctr_num,
-            "tt_status": tt_status,
+            "tt_status": tt_status_api,
             "enc_mode": encryption_mode
         })
     else:
@@ -127,9 +140,19 @@ def sdm_info_tt():
     return _internal_sdm(with_tt=True)
 
 
+@app.route('/api/tagtt')
+def sdm_api_info_tt():
+    return _internal_sdm(with_tt=True, force_json=True)
+
+
 @app.route('/tag')
 def sdm_info():
     return _internal_sdm(with_tt=False)
+
+
+@app.route('/api/tag')
+def sdm_api_info():
+    return _internal_sdm(with_tt=False, force_json=True)
 
 
 @app.route('/tagpt')
@@ -145,7 +168,7 @@ def sdm_info_plain():
         res = validate_plain_sun(uid=uid,
                                  read_ctr=read_ctr,
                                  sdmmac=cmac,
-                                 sdm_file_read_key=SDM_FILE_READ_KEY)
+                                 sdm_file_read_key=derive_tag_key(SDM_MASTER_KEY, uid, 2))
     except InvalidMessage:
         raise BadRequest("Invalid message (most probably wrong signature).")
 

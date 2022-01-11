@@ -6,7 +6,7 @@ This code was implemented based on the examples provided in:
 import io
 import struct
 from enum import Enum
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Callable
 
 from Crypto.Hash import CMAC
 from Crypto.Cipher import AES
@@ -177,7 +177,7 @@ def get_encryption_mode(picc_enc_data: bytes):
 
 
 def decrypt_sun_message(sdm_meta_read_key: bytes,
-                        sdm_file_read_key: bytes,
+                        sdm_file_read_key: Callable[[bytes], bytes],
                         picc_enc_data: bytes,
                         sdmmac: bytes,
                         enc_file_data: Optional[bytes] = None) -> dict:
@@ -222,7 +222,7 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
     # dont read the buffer any further if we don't recognize it
     if uid_length not in [0x07]:
         # fake SDMMAC calculation to avoid potential timing attacks
-        calculate_sdmmac(sdm_file_read_key, b"\x00" * 10, enc_file_data, mode=mode)
+        calculate_sdmmac(sdm_file_read_key(b"\x00" * 7), b"\x00" * 10, enc_file_data, mode=mode)
         raise InvalidMessage("Unsupported UID length")
 
     if uid_mirroring_en:
@@ -234,14 +234,16 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
         datastream.write(read_ctr)
         read_ctr_num = struct.unpack("<I", read_ctr + b"\x00")[0]
 
-    if sdmmac != calculate_sdmmac(sdm_file_read_key, datastream.getvalue(), enc_file_data, mode=mode):
+    file_key = sdm_file_read_key(uid)
+
+    if sdmmac != calculate_sdmmac(file_key, datastream.getvalue(), enc_file_data, mode=mode):
         raise InvalidMessage("Message is not properly signed - invalid MAC")
 
     if enc_file_data:
         if not read_ctr:
             raise InvalidMessage("SDMReadCtr is required to decipher SDMENCFileData.")
 
-        file_data = decrypt_file_data(sdm_file_read_key, datastream.getvalue(), read_ctr, enc_file_data, mode=mode)
+        file_data = decrypt_file_data(file_key, datastream.getvalue(), read_ctr, enc_file_data, mode=mode)
 
     return {
         "picc_data_tag": picc_data_tag,
