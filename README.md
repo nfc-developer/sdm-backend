@@ -48,7 +48,7 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
    docker run \
        -p 5000:80 \
        -e SDM_MASTER_KEY=00000000000000000000000000000000 \
-       icedevml/sdm-backend:build20220111
+       icedevml/sdm-backend:build20220111-v2
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
