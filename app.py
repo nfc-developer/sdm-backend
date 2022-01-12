@@ -9,6 +9,7 @@ from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SDM_M
 from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode
 
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 @app.errorhandler(400)
