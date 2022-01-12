@@ -8,14 +8,16 @@ An example of Flask application which can decrypt data contained in NDEF "mirror
 
 *Note: This GitHub project is not affiliated with NXP B.V. in any way. Product names are mentioned here in order to inform about compatibility.*
 
-## Contact
-Feel free to reach me at mike@nfcdeveloper.com if you have any questions concerning this topic.
+## Demo
+Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
 
 ## How to configure the tags?
 We suggest using [NFC Developer App](https://nfcdeveloper.com/tag-app/tutorial/) for Android/iOS in order to configure the tags. This application will do most things "under the hood" and your tags will work out-of-the-box with this project.
 
-## Demo
-Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). This server is using blank authentication keys (all-zeros, factory default). You can use this server for testing and should work fine until you change the default factory keys on your tags.
+<a href="https://nfcdeveloper.com/tag-app/tutorial/"><img src="https://raw.githubusercontent.com/icedevml/sdm-backend/33afbc8ca7abe33326d947610556315e5ba5e842/.github/nfcdeveloperapp-ad.png" title="NFC Developer App Information"></a>
+
+## Contact
+Feel free to reach me at mike@nfcdeveloper.com if you have any questions concerning this topic.
 
 ## How to test?
 ### Manual installation
