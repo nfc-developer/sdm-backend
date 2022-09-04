@@ -13,17 +13,17 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 @app.errorhandler(400)
-def bad_request(e):
+def handler_bad_request(e):
     return render_template('error.html', code=400, msg=str(e)), 400
 
 
 @app.errorhandler(403)
-def bad_request(e):
+def handler_forbidden(e):
     return render_template('error.html', code=403, msg=str(e)), 403
 
 
 @app.errorhandler(404)
-def bad_request(e):
+def handler_not_found(e):
     return render_template('error.html', code=404, msg=str(e)), 404
 
 
