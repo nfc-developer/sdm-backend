@@ -1,20 +1,40 @@
-import hashlib
-import base64
 import binascii
+import hmac
+import hashlib
+
+from Crypto.Hash import CMAC
+from Crypto.Cipher import AES
+
+
+# NOTE: Key diversification methods were modified as of 2023-01-24
+# If you rely on the previous diversification methods, please use commits from earlier dates
+
+DIV_CONST1 = binascii.unhexlify("50494343446174614b6579")
+DIV_CONST2 = binascii.unhexlify("536c6f744d61737465724b6579")
+DIV_CONST3 = binascii.unhexlify("446976426173654b6579")
+
+
+def hmac_sha256(key, msg, no_trunc=False):
+    h = hmac.new(key, msg, digestmod=hashlib.sha256).digest()
+    return h if no_trunc else h[0:16]
 
 
 # derive a key which is UID-diversified
-def derive_tag_key(master_key: bytes, uid: bytes, key_no: int) -> bytes:
+def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
-    return hashlib.pbkdf2_hmac('sha512', master_key, b"key" + uid + bytes([key_no]), 5000, 16)
+    c = CMAC.new(hmac_sha256(master_key, DIV_CONST2 + bytes([key_no])), ciphermod=AES)
+    c.update(b"\x01" + hmac_sha256(hmac_sha256(master_key, DIV_CONST3, no_trunc=True), uid))
+    return c.digest()
 
 
 # derive a key which is not UID-diversified
-def derive_undiversified_key(master_key: bytes, key_no: int) -> bytes:
+def derive_undiversified_key(master_key: bytes, key_no: int):
+    if key_no != 1:
+        raise RuntimeError("Only key #1 can be derived in undiversified mode.")
+
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
-    return hashlib.pbkdf2_hmac('sha512', master_key, b"key_no_uid" + bytes([key_no]), 5000, 16)
-
+    return hmac_sha256(master_key, DIV_CONST1)

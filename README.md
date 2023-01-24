@@ -49,12 +49,12 @@ Feel free to reach me at mike@nfcdeveloper.com if you have any questions concern
    ```
    docker run \
        -p 5000:80 \
-       -e SDM_MASTER_KEY=00000000000000000000000000000000 \
-       icedevml/sdm-backend:build20220822-v2
+       -e SYSTEM_MASTER_KEY=00000000000000000000000000000000 \
+       icedevml/sdm-backend:build20230124-v1
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
-Note: If you are running production instance, the `SDM_MASTER_KEY` should be an unique 16 byte value (hex encoded). However, all-zeros key is perfectly fine for testing.
+Note: If you are running production instance, the `SYSTEM_MASTER_KEY` should be an unique 16 byte value (hex encoded). However, all-zeros key is perfectly fine for testing.
 
 ## Authors
 

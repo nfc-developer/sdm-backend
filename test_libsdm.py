@@ -6,13 +6,14 @@ This code was implemented based on the examples provided in:
 import binascii
 import config
 
-from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode
+from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode, ParamMode
 
 
 def test_sun1():
     # From AN12196 page 12
     # https://ntag.nxp.com/424?e=EF963FF7828658A599F3041510671E88&c=94EED9EE65337086
     res = decrypt_sun_message(
+        param_mode=ParamMode.SEPARATED,
         sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
         sdm_file_read_key=lambda _: binascii.unhexlify('00000000000000000000000000000000'),
         picc_enc_data=binascii.unhexlify("EF963FF7828658A599F3041510671E88"),
@@ -31,6 +32,7 @@ def test_sun2():
     original_sdmmac_param = config.SDMMAC_PARAM
     config.SDMMAC_PARAM = "cmac"
     res = decrypt_sun_message(
+        param_mode=ParamMode.SEPARATED,
         sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
         sdm_file_read_key=lambda _: binascii.unhexlify('00000000000000000000000000000000'),
         picc_enc_data=binascii.unhexlify("FD91EC264309878BE6345CBE53BADF40"),
@@ -49,6 +51,7 @@ def test_sun3_custom():
     original_sdmmac_param = config.SDMMAC_PARAM
     config.SDMMAC_PARAM = ""
     res = decrypt_sun_message(
+        param_mode=ParamMode.SEPARATED,
         sdm_meta_read_key=binascii.unhexlify('42aff114f2cb3b6141be6dc95dfc5416'),
         sdm_file_read_key=lambda _: binascii.unhexlify('b62a9baf092439bd43c62aee96b970c5'),
         picc_enc_data=binascii.unhexlify('8ACADDEF0A9B62CDAE39A16B83FC14DE'),
@@ -68,6 +71,7 @@ def test_sun2_wrong_sdmmac():
         original_sdmmac_param = config.SDMMAC_PARAM
         config.SDMMAC_PARAM = "cmac"
         decrypt_sun_message(
+            param_mode=ParamMode.SEPARATED,
             sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
             sdm_file_read_key=lambda _: binascii.unhexlify('00000000000000000000000000000000'),
             picc_enc_data=binascii.unhexlify("FD91EC264309878BE6345CBE53BADF40"),
@@ -110,6 +114,7 @@ def test_plain_sdm_wrong():
 
 def test_sdm_lrp1():
     res = decrypt_sun_message(
+        param_mode=ParamMode.SEPARATED,
         sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
         sdm_file_read_key=lambda _: binascii.unhexlify('00000000000000000000000000000000'),
         picc_enc_data=binascii.unhexlify("07D9CA2545881D4BFDD920BE1603268C0714420DD893A497"),
@@ -125,6 +130,7 @@ def test_sdm_lrp1():
 
 def test_sdm_lrp2():
     res = decrypt_sun_message(
+        param_mode=ParamMode.SEPARATED,
         sdm_meta_read_key=binascii.unhexlify('00000000000000000000000000000000'),
         sdm_file_read_key=lambda _: binascii.unhexlify('00000000000000000000000000000000'),
         picc_enc_data=binascii.unhexlify("1FCBE61B3E4CAD980CBFDD333E7A4AC4A579569BAFD22C5F"),
