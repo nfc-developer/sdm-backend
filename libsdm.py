@@ -21,16 +21,23 @@ class EncMode(Enum):
     LRP = 1
 
 
+class ParamMode(Enum):
+    SEPARATED = 0,
+    BULK = 1
+
+
 class InvalidMessage(RuntimeError):
     pass
 
 
-def calculate_sdmmac(sdm_file_read_key: bytes,
+def calculate_sdmmac(param_mode: ParamMode,
+                     sdm_file_read_key: bytes,
                      picc_data: bytes,
                      enc_file_data: Optional[bytes] = None,
                      mode: EncMode = None) -> bytes:
     """
     Calculate SDMMAC for NTAG 424 DNA
+    :param param_mode: Type of dynamic URL encoding (ParamMode)
     :param sdm_file_read_key: MAC calculation key (K_SDMFileReadKey)
     :param picc_data: [ UID ][ SDMReadCtr ]
     :param enc_file_data: SDMEncFileData (if used)
@@ -45,7 +52,7 @@ def calculate_sdmmac(sdm_file_read_key: bytes,
     if enc_file_data:
         sdmmac_param_text = "&{}=".format(config.SDMMAC_PARAM)
 
-        if not config.SDMMAC_PARAM:
+        if param_mode == ParamMode.BULK or not config.SDMMAC_PARAM:
             sdmmac_param_text = ""
 
         input_buf.write(enc_file_data.hex().upper().encode('ascii') + sdmmac_param_text.encode('ascii'))
@@ -154,7 +161,7 @@ def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read
     datastream.write(uid)
     datastream.write(read_ctr_ba)
 
-    proper_sdmmac = calculate_sdmmac(sdm_file_read_key, datastream.getvalue(), mode=mode)
+    proper_sdmmac = calculate_sdmmac(ParamMode.SEPARATED, sdm_file_read_key, datastream.getvalue(), mode=mode)
 
     if sdmmac != proper_sdmmac:
         raise InvalidMessage("Message is not properly signed - invalid MAC")
@@ -176,13 +183,15 @@ def get_encryption_mode(picc_enc_data: bytes):
         raise InvalidMessage("Unsupported encryption mode.")
 
 
-def decrypt_sun_message(sdm_meta_read_key: bytes,
+def decrypt_sun_message(param_mode: ParamMode,
+                        sdm_meta_read_key: bytes,
                         sdm_file_read_key: Callable[[bytes], bytes],
                         picc_enc_data: bytes,
                         sdmmac: bytes,
                         enc_file_data: Optional[bytes] = None) -> dict:
     """
     Decrypt SUN message for NTAG 424 DNA
+    :param param_mode: Type of dynamic URL encoding (ParamMode)
     :param sdm_meta_read_key: SUN decryption key (K_SDMMetaReadKey)
     :param sdm_file_read_key: MAC calculation key (K_SDMFileReadKey)
     :param ciphertext: Encrypted SUN message
@@ -222,7 +231,7 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
     # dont read the buffer any further if we don't recognize it
     if uid_length not in [0x07]:
         # fake SDMMAC calculation to avoid potential timing attacks
-        calculate_sdmmac(sdm_file_read_key(b"\x00" * 7), b"\x00" * 10, enc_file_data, mode=mode)
+        calculate_sdmmac(param_mode, sdm_file_read_key(b"\x00" * 7), b"\x00" * 10, enc_file_data, mode=mode)
         raise InvalidMessage("Unsupported UID length")
 
     if uid_mirroring_en:
@@ -236,7 +245,7 @@ def decrypt_sun_message(sdm_meta_read_key: bytes,
 
     file_key = sdm_file_read_key(uid)
 
-    if sdmmac != calculate_sdmmac(file_key, datastream.getvalue(), enc_file_data, mode=mode):
+    if sdmmac != calculate_sdmmac(param_mode, file_key, datastream.getvalue(), enc_file_data, mode=mode):
         raise InvalidMessage("Message is not properly signed - invalid MAC")
 
     if enc_file_data:

@@ -2,7 +2,7 @@ import binascii
 
 
 # used for derivation of per-tag keys
-SDM_MASTER_KEY = binascii.unhexlify("00000000000000000000000000000000")
+SYSTEM_MASTER_KEY = binascii.unhexlify("00000000000000000000000000000000")
 
 # for encrypted mirroring
 ENC_PICC_DATA_PARAM = "picc_data"
