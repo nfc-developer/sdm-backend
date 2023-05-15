@@ -2,36 +2,49 @@ import argparse
 import binascii
 import io
 
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import BadRequest
 
-import warn_old_config
-from derive import derive_tag_key, derive_undiversified_key
-from config import SDMMAC_PARAM, ENC_FILE_DATA_PARAM, ENC_PICC_DATA_PARAM, SYSTEM_MASTER_KEY, UID_PARAM, CTR_PARAM, REQUIRE_LRP
-from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode, ParamMode
+from config import (
+    CTR_PARAM,
+    ENC_FILE_DATA_PARAM,
+    ENC_PICC_DATA_PARAM,
+    REQUIRE_LRP,
+    SDMMAC_PARAM,
+    SYSTEM_MASTER_KEY,
+    UID_PARAM,
+)
+from src.derive import derive_tag_key, derive_undiversified_key
+from src.libsdm import (
+    EncMode,
+    InvalidMessage,
+    ParamMode,
+    decrypt_sun_message,
+    validate_plain_sun,
+)
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 @app.errorhandler(400)
-def handler_bad_request(e):
-    return render_template('error.html', code=400, msg=str(e)), 400
+def handler_bad_request(err):
+    return render_template('error.html', code=400, msg=str(err)), 400
 
 
 @app.errorhandler(403)
-def handler_forbidden(e):
-    return render_template('error.html', code=403, msg=str(e)), 403
+def handler_forbidden(err):
+    return render_template('error.html', code=403, msg=str(err)), 403
 
 
 @app.errorhandler(404)
-def handler_not_found(e):
-    return render_template('error.html', code=404, msg=str(e)), 404
+def handler_not_found(err):
+    return render_template('error.html', code=404, msg=str(err)), 404
 
 
 @app.context_processor
 def inject_demo_mode():
-    demo_mode = (SYSTEM_MASTER_KEY == (b"\x00" * 16))
+    demo_mode = SYSTEM_MASTER_KEY == (b"\x00" * 16)
     return {"demo_mode": demo_mode}
 
 
@@ -46,12 +59,12 @@ def sdm_main():
 def parse_parameters():
     if request.args.get('e'):
         param_mode = ParamMode.BULK
-        e = request.args.get('e')
+        arg_e = request.args.get('e')
 
         try:
-            e_b = binascii.unhexlify(e)
+            e_b = binascii.unhexlify(arg_e)
         except binascii.Error:
-            raise BadRequest("Failed to decode parameters.")
+            raise BadRequest("Failed to decode parameters.") from None
 
         e_buf = io.BytesIO(e_b)
 
@@ -86,10 +99,11 @@ def parse_parameters():
         sdmmac = request.args.get(SDMMAC_PARAM)
 
         if not enc_picc_data:
-            raise BadRequest("Parameter {} is required".format(ENC_PICC_DATA_PARAM))
+            raise BadRequest(
+                f"Parameter {ENC_PICC_DATA_PARAM} is required")
 
         if not sdmmac:
-            raise BadRequest("Parameter {} is required".format(SDMMAC_PARAM))
+            raise BadRequest("Parameter {SDMMAC_PARAM} is required")
 
         try:
             enc_file_data_b = None
@@ -99,7 +113,7 @@ def parse_parameters():
             if enc_file_data:
                 enc_file_data_b = binascii.unhexlify(enc_file_data)
         except binascii.Error:
-            raise BadRequest("Failed to decode parameters.")
+            raise BadRequest("Failed to decode parameters.") from None
 
     return param_mode, enc_picc_data_b, enc_file_data_b, sdmmac_b
 
@@ -112,13 +126,16 @@ def _internal_sdm(with_tt=False, force_json=False):
 
     try:
         res = decrypt_sun_message(param_mode=param_mode,
-                                  sdm_meta_read_key=derive_undiversified_key(SYSTEM_MASTER_KEY, 1),
-                                  sdm_file_read_key=lambda uid: derive_tag_key(SYSTEM_MASTER_KEY, uid, 2),
+                                  sdm_meta_read_key=derive_undiversified_key(
+                                      SYSTEM_MASTER_KEY, 1),
+                                  sdm_file_read_key=lambda uid: derive_tag_key(
+                                      SYSTEM_MASTER_KEY, uid, 2),
                                   picc_enc_data=enc_picc_data_b,
                                   sdmmac=sdmmac_b,
                                   enc_file_data=enc_file_data_b)
     except InvalidMessage:
-        raise BadRequest("Invalid message (most probably wrong signature).")
+        raise BadRequest(
+            "Invalid message (most probably wrong signature).") from InvalidMessage
 
     if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
         raise BadRequest("Invalid encryption mode, expected LRP.")
@@ -201,8 +218,8 @@ def sdm_info_tt():
 def sdm_api_info_tt():
     try:
         return _internal_sdm(with_tt=True, force_json=True)
-    except BadRequest as e:
-        return jsonify({"error": str(e)})
+    except BadRequest as err:
+        return jsonify({"error": str(err)})
 
 
 @app.route('/tag')
@@ -214,8 +231,8 @@ def sdm_info():
 def sdm_api_info():
     try:
         return _internal_sdm(with_tt=False, force_json=True)
-    except BadRequest as e:
-        return jsonify({"error": str(e)})
+    except BadRequest as err:
+        return jsonify({"error": str(err)})
 
 
 def _internal_tagpt(force_json=False):
@@ -224,15 +241,19 @@ def _internal_tagpt(force_json=False):
         read_ctr = binascii.unhexlify(request.args[CTR_PARAM])
         cmac = binascii.unhexlify(request.args[SDMMAC_PARAM])
     except binascii.Error:
-        raise BadRequest("Failed to decode parameters.")
+        raise BadRequest("Failed to decode parameters.") from None
 
     try:
         res = validate_plain_sun(uid=uid,
                                  read_ctr=read_ctr,
                                  sdmmac=cmac,
-                                 sdm_file_read_key=derive_tag_key(SYSTEM_MASTER_KEY, uid, 2))
+                                 sdm_file_read_key=derive_tag_key(
+                                     SYSTEM_MASTER_KEY,
+                                     uid,
+                                     2))
     except InvalidMessage:
-        raise BadRequest("Invalid message (most probably wrong signature).")
+        raise BadRequest(
+            "Invalid message (most probably wrong signature).") from None
 
     if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
         raise BadRequest("Invalid encryption mode, expected LRP.")
@@ -259,8 +280,8 @@ def sdm_info_plain():
 def sdm_api_info_plain():
     try:
         return _internal_tagpt(force_json=True)
-    except BadRequest as e:
-        return jsonify({"error": str(e)}), 400
+    except BadRequest as err:
+        return jsonify({"error": str(err)}), 400
 
 
 @app.route('/webnfc')

@@ -2,11 +2,10 @@
 A short example how to decrypt and validate CMAC for a simple SDM in LRP mode on NTAG 424 DNA.
 """
 
+import binascii
 import io
 
-from lrp import LRP
-
-import binascii
+from src.lrp import LRP
 
 
 def test_lrp_sdm():

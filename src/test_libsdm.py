@@ -4,10 +4,16 @@ This code was implemented based on the examples provided in:
 """
 
 import binascii
-import config
-from derive import derive_undiversified_key, derive_tag_key
 
-from libsdm import decrypt_sun_message, validate_plain_sun, InvalidMessage, EncMode, ParamMode
+import config
+from src.derive import derive_tag_key, derive_undiversified_key
+from src.libsdm import (
+    EncMode,
+    InvalidMessage,
+    ParamMode,
+    decrypt_sun_message,
+    validate_plain_sun,
+)
 
 
 def test_sun1():
@@ -59,7 +65,7 @@ def test_sun3_custom():
         sdmmac=binascii.unhexlify('238B2543A8DEBAD8'),
         enc_file_data=binascii.unhexlify('B8436E11F627BB7F543FCC0C1E0D1A89'))
     config.SDMMAC_PARAM = original_sdmmac_param
-    
+
     assert res['picc_data_tag'] == b'\xc7'
     assert res['uid'] == binascii.unhexlify('041d3c8a2d6b80')
     assert res['read_ctr'] == 291
@@ -78,7 +84,7 @@ def test_sun2_wrong_sdmmac():
             picc_enc_data=binascii.unhexlify("FD91EC264309878BE6345CBE53BADF40"),
             sdmmac=binascii.unhexlify("3CC1E7F6C6C33B33"),
             enc_file_data=binascii.unhexlify("CEE9A53E3E463EF1F459635736738962"))
-    except InvalidMessage as e:
+    except InvalidMessage:
         # this is expected
         pass
     else:
@@ -106,7 +112,7 @@ def test_plain_sdm_wrong():
             sdm_file_read_key=binascii.unhexlify('00000000000000000000000000000000'),
             mode=EncMode.AES
         )
-    except InvalidMessage as e:
+    except InvalidMessage:
         # this is expected
         pass
     else:

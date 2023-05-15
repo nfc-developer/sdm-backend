@@ -6,7 +6,7 @@ import binascii
 
 from Crypto.Protocol.SecretSharing import _Element
 
-from lrp import LRP, nibbles, incr_counter
+from src.lrp import LRP, incr_counter, nibbles
 
 
 def test_incr_counter():

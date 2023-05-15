@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long, invalid-name
+
 """
 Leakage Resilient Primitive (AN12304).
 
@@ -16,10 +18,10 @@ from Crypto.Util.strxor import strxor
 
 
 def remove_pad(pt: bytes):
-    padl = 0
+    padding = 0
 
     for b in pt[::-1]:
-        padl += 1
+        padding += 1
 
         if b == 0x80:
             break
@@ -27,47 +29,47 @@ def remove_pad(pt: bytes):
         if b != 0x00:
             raise RuntimeError('Invalid padding')
 
-    return pt[:-padl]
+    return pt[:-padding]
 
 
-def nibbles(x: Union[bytes, str]) -> Generator[int, None, None]:
+def nibbles(val: Union[bytes, str]) -> Generator[int, None, None]:
     """
     Generate integers out of x (bytes), applicable for m = 4
     """
-    if isinstance(x, bytes):
-        x = x.hex()
+    if isinstance(val, bytes):
+        val = val.hex()
 
-    for nb in x:
+    for nb in val:
         yield binascii.unhexlify("0" + nb)[0]
 
 
-def incr_counter(r: bytes):
-    max_bit_len = len(r) * 8
+def incr_counter(record: bytes):
+    max_bit_len = len(record) * 8
 
-    ctr_orig = int.from_bytes(r, byteorder='big', signed=False)
+    ctr_orig = int.from_bytes(record, byteorder='big', signed=False)
     ctr_incr = ctr_orig + 1
 
     if ctr_incr.bit_length() > max_bit_len:
         # we have overflow, reset counter to zero
-        return b"\x00" * len(r)
+        return b"\x00" * len(record)
 
-    return ctr_incr.to_bytes(len(r), byteorder='big')
+    return ctr_incr.to_bytes(len(record), byteorder='big')
 
 
-def e(k: bytes, v: bytes) -> bytes:
+def e(key: bytes, val: bytes) -> bytes:
     """
     Simple AES/ECB encrypt `v` with key `k`
     """
-    cipher = AES.new(k, AES.MODE_ECB)
-    return cipher.encrypt(v)
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.encrypt(val)
 
 
-def d(k: bytes, v: bytes) -> bytes:
+def d(key: bytes, val: bytes) -> bytes:
     """
     Simple AES/ECB decrypt `v` with key `k`
     """
-    cipher = AES.new(k, AES.MODE_ECB)
-    return cipher.decrypt(v)
+    cipher = AES.new(key, AES.MODE_ECB)
+    return cipher.decrypt(val)
 
 
 class LRP:
@@ -87,12 +89,12 @@ class LRP:
         self.r = r
         self.pad = pad
 
-        self.p = LRP.generate_plaintexts(key)
+        self.p = LRP.generate_plain_texts(key)
         self.ku = LRP.generate_updated_keys(key)
         self.kp = self.ku[self.u]
 
     @staticmethod
-    def generate_plaintexts(k: bytes, m: int = 4) -> List[bytes]:
+    def generate_plain_texts(k: bytes, m: int = 4) -> List[bytes]:
         """
         Algorithm 1
         """
@@ -100,7 +102,7 @@ class LRP:
         h = e(h, b"\x55" * 16)
         p = []
 
-        for i in range(0, 2**m):
+        for _ in range(0, 2**m):
             p.append(e(h, b"\xaa" * 16))
             h = e(h, b"\x55" * 16)
 
@@ -115,7 +117,7 @@ class LRP:
         h = e(h, b"\xaa" * 16)
         uk = []
 
-        for i in range(0, q):
+        for _ in range(0, q):
             uk.append(e(h, b"\xaa" * 16))
             h = e(h, b"\x55" * 16)
 
@@ -143,33 +145,33 @@ class LRP:
         :param data: plaintext
         :return: ciphertext
         """
-        ptstream = io.BytesIO()
-        ctstream = io.BytesIO()
-        ptstream.write(data)
+        pt_stream = io.BytesIO()
+        ct_stream = io.BytesIO()
+        pt_stream.write(data)
 
         if self.pad:
-            ptstream.write(b"\x80")
+            pt_stream.write(b"\x80")
 
-            while ptstream.getbuffer().nbytes % AES.block_size != 0:
-                ptstream.write(b"\x00")
-        elif ptstream.getbuffer().nbytes % AES.block_size != 0:
+            while pt_stream.getbuffer().nbytes % AES.block_size != 0:
+                pt_stream.write(b"\x00")
+        elif pt_stream.getbuffer().nbytes % AES.block_size != 0:
             raise RuntimeError("Parameter pt must have length multiple of AES block size.")
-        elif ptstream.getbuffer().nbytes == 0:
+        elif pt_stream.getbuffer().nbytes == 0:
             raise RuntimeError("Zero length pt not supported.")
 
-        ptstream.seek(0)
+        pt_stream.seek(0)
 
         while True:
-            block = ptstream.read(AES.block_size)
+            block = pt_stream.read(AES.block_size)
 
-            if not len(block):
+            if len(block) == 0:
                 break
 
             y = LRP.eval_lrp(self.p, self.kp, self.r, final=True)
-            ctstream.write(e(y, block))
+            ct_stream.write(e(y, block))
             self.r = incr_counter(self.r)
 
-        return ctstream.getvalue()
+        return ct_stream.getvalue()
 
     def decrypt(self, data: bytes) -> bytes:
         """
@@ -177,23 +179,23 @@ class LRP:
         :param data: ciphertext
         :return: plaintext
         """
-        ctstream = io.BytesIO()
-        ctstream.write(data)
-        ctstream.seek(0)
+        ct_stream = io.BytesIO()
+        ct_stream.write(data)
+        ct_stream.seek(0)
 
-        ptstream = io.BytesIO()
+        pt_stream = io.BytesIO()
 
         while True:
-            block = ctstream.read(AES.block_size)
+            block = ct_stream.read(AES.block_size)
 
-            if not len(block):
+            if len(block) == 0:
                 break
 
             y = LRP.eval_lrp(self.p, self.kp, self.r, final=True)
-            ptstream.write(d(y, block))
+            pt_stream.write(d(y, block))
             self.r = incr_counter(self.r)
 
-        pt = ptstream.getvalue()
+        pt = pt_stream.getvalue()
 
         if self.pad:
             pt = remove_pad(pt)

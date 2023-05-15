@@ -1,0 +1,29 @@
+{
+    "autopep8.args": ["--max-line-length", "120"],
+    "cSpell.words": [
+        "ciphermod",
+        "ciphertext",
+        "cmac",
+        "datasheet",
+        "digestmod",
+        "encing",
+        "getbuffer",
+        "ITSEC",
+        "jsonify",
+        "KSDMMetaReadKey",
+        "libsdm",
+        "LRICB",
+        "nb",
+        "nbytes",
+        "NTAG",
+        "Pharisaeus",
+        "picc",
+        "SDMENCFileData",
+        "sdmmac",
+        "strxor",
+        "tagpt",
+        "tagtt",
+        "unhexlify",
+        "webnfc"
+    ]
+}
