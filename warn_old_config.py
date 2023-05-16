@@ -1,3 +1,6 @@
+# pylint: disable=unused-import, bare-except
+# ruff: noqa: F401, E722
+
 import sys
 
 try:

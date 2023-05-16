@@ -118,6 +118,91 @@ def parse_parameters():
     return param_mode, enc_picc_data_b, enc_file_data_b, sdmmac_b
 
 
+@app.route('/tagpt')
+def sdm_info_plain():
+    """
+    Return HTML
+    """
+    return _internal_tagpt()
+
+
+@app.route('/api/tagpt')
+def sdm_api_info_plain():
+    """
+    Return JSON
+    """
+    try:
+        return _internal_tagpt(force_json=True)
+    except BadRequest as err:
+        return jsonify({"error": str(err)}), 400
+
+
+def _internal_tagpt(force_json=False):
+    try:
+        uid = binascii.unhexlify(request.args[UID_PARAM])
+        read_ctr = binascii.unhexlify(request.args[CTR_PARAM])
+        cmac = binascii.unhexlify(request.args[SDMMAC_PARAM])
+    except binascii.Error:
+        raise BadRequest("Failed to decode parameters.") from None
+
+    try:
+        sdm_file_read_key = derive_tag_key(SYSTEM_MASTER_KEY, uid, 2)
+        print(sdm_file_read_key)
+        res = validate_plain_sun(uid=uid,
+                                 read_ctr=read_ctr,
+                                 sdmmac=cmac,
+                                 sdm_file_read_key=sdm_file_read_key)
+    except InvalidMessage:
+        raise BadRequest(
+            "Invalid message (most probably wrong signature).") from None
+
+    if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
+        raise BadRequest("Invalid encryption mode, expected LRP.")
+
+    if request.args.get("output") == "json" or force_json:
+        return jsonify({
+            "uid": res['uid'].hex().upper(),
+            "read_ctr": res['read_ctr'],
+            "enc_mode": res['encryption_mode'].name
+        })
+    else:
+        return render_template('sdm_info.html',
+                               encryption_mode=res['encryption_mode'].name,
+                               uid=res['uid'],
+                               read_ctr_num=res['read_ctr'])
+
+
+@app.route('/webnfc')
+def sdm_webnfc():
+    return render_template('sdm_webnfc.html')
+
+
+@app.route('/tagtt')
+def sdm_info_tt():
+    return _internal_sdm(with_tt=True)
+
+
+@app.route('/api/tagtt')
+def sdm_api_info_tt():
+    try:
+        return _internal_sdm(with_tt=True, force_json=True)
+    except BadRequest as err:
+        return jsonify({"error": str(err)})
+
+
+@app.route('/tag')
+def sdm_info():
+    return _internal_sdm(with_tt=False)
+
+
+@app.route('/api/tag')
+def sdm_api_info():
+    try:
+        return _internal_sdm(with_tt=False, force_json=True)
+    except BadRequest as err:
+        return jsonify({"error": str(err)})
+
+
 def _internal_sdm(with_tt=False, force_json=False):
     """
     SUN decrypting/validating endpoint.
@@ -207,86 +292,6 @@ def _internal_sdm(with_tt=False, force_json=False):
                                file_data_utf8=file_data_utf8,
                                tt_status=tt_status,
                                tt_color=tt_color)
-
-
-@app.route('/tagtt')
-def sdm_info_tt():
-    return _internal_sdm(with_tt=True)
-
-
-@app.route('/api/tagtt')
-def sdm_api_info_tt():
-    try:
-        return _internal_sdm(with_tt=True, force_json=True)
-    except BadRequest as err:
-        return jsonify({"error": str(err)})
-
-
-@app.route('/tag')
-def sdm_info():
-    return _internal_sdm(with_tt=False)
-
-
-@app.route('/api/tag')
-def sdm_api_info():
-    try:
-        return _internal_sdm(with_tt=False, force_json=True)
-    except BadRequest as err:
-        return jsonify({"error": str(err)})
-
-
-def _internal_tagpt(force_json=False):
-    try:
-        uid = binascii.unhexlify(request.args[UID_PARAM])
-        read_ctr = binascii.unhexlify(request.args[CTR_PARAM])
-        cmac = binascii.unhexlify(request.args[SDMMAC_PARAM])
-    except binascii.Error:
-        raise BadRequest("Failed to decode parameters.") from None
-
-    try:
-        res = validate_plain_sun(uid=uid,
-                                 read_ctr=read_ctr,
-                                 sdmmac=cmac,
-                                 sdm_file_read_key=derive_tag_key(
-                                     SYSTEM_MASTER_KEY,
-                                     uid,
-                                     2))
-    except InvalidMessage:
-        raise BadRequest(
-            "Invalid message (most probably wrong signature).") from None
-
-    if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
-        raise BadRequest("Invalid encryption mode, expected LRP.")
-
-    if request.args.get("output") == "json" or force_json:
-        return jsonify({
-            "uid": res['uid'].hex().upper(),
-            "read_ctr": res['read_ctr'],
-            "enc_mode": res['encryption_mode'].name
-        })
-    else:
-        return render_template('sdm_info.html',
-                               encryption_mode=res['encryption_mode'].name,
-                               uid=res['uid'],
-                               read_ctr_num=res['read_ctr'])
-
-
-@app.route('/tagpt')
-def sdm_info_plain():
-    return _internal_tagpt()
-
-
-@app.route('/api/tagpt')
-def sdm_api_info_plain():
-    try:
-        return _internal_tagpt(force_json=True)
-    except BadRequest as err:
-        return jsonify({"error": str(err)}), 400
-
-
-@app.route('/webnfc')
-def sdm_webnfc():
-    return render_template('sdm_webnfc.html')
 
 
 if __name__ == '__main__':

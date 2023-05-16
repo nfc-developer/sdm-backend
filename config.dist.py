@@ -1,6 +1,5 @@
 import binascii
 
-
 # used for derivation of per-tag keys
 SYSTEM_MASTER_KEY = binascii.unhexlify("00000000000000000000000000000000")
 

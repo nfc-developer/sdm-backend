@@ -163,7 +163,9 @@ def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read
     data_stream.write(read_ctr_ba)
 
     proper_sdmmac = calculate_sdmmac(ParamMode.SEPARATED,
-                                     sdm_file_read_key, data_stream.getvalue(), mode=mode)
+                                     sdm_file_read_key,
+                                     data_stream.getvalue(),
+                                     mode=mode)
 
     if sdmmac != proper_sdmmac:
         raise InvalidMessage("Message is not properly signed - invalid MAC")
