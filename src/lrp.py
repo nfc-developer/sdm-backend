@@ -32,44 +32,44 @@ def remove_pad(pt: bytes):
     return pt[:-padding]
 
 
-def nibbles(val: Union[bytes, str]) -> Generator[int, None, None]:
+def nibbles(x: Union[bytes, str]) -> Generator[int, None, None]:
     """
     Generate integers out of x (bytes), applicable for m = 4
     """
-    if isinstance(val, bytes):
-        val = val.hex()
+    if isinstance(x, bytes):
+        x = x.hex()
 
-    for nb in val:
+    for nb in x:
         yield binascii.unhexlify("0" + nb)[0]
 
 
-def incr_counter(record: bytes):
-    max_bit_len = len(record) * 8
+def incr_counter(r: bytes):
+    max_bit_len = len(r) * 8
 
-    ctr_orig = int.from_bytes(record, byteorder='big', signed=False)
+    ctr_orig = int.from_bytes(r, byteorder='big', signed=False)
     ctr_incr = ctr_orig + 1
 
     if ctr_incr.bit_length() > max_bit_len:
         # we have overflow, reset counter to zero
-        return b"\x00" * len(record)
+        return b"\x00" * len(r)
 
-    return ctr_incr.to_bytes(len(record), byteorder='big')
+    return ctr_incr.to_bytes(len(r), byteorder='big')
 
 
-def e(key: bytes, val: bytes) -> bytes:
+def e(k: bytes, v: bytes) -> bytes:
     """
     Simple AES/ECB encrypt `v` with key `k`
     """
-    cipher = AES.new(key, AES.MODE_ECB)
-    return cipher.encrypt(val)
+    cipher = AES.new(k, AES.MODE_ECB)
+    return cipher.encrypt(v)
 
 
-def d(key: bytes, val: bytes) -> bytes:
+def d(k: bytes, v: bytes) -> bytes:
     """
     Simple AES/ECB decrypt `v` with key `k`
     """
-    cipher = AES.new(key, AES.MODE_ECB)
-    return cipher.decrypt(val)
+    cipher = AES.new(k, AES.MODE_ECB)
+    return cipher.decrypt(v)
 
 
 class LRP:
