@@ -18,10 +18,10 @@ from Crypto.Util.strxor import strxor
 
 
 def remove_pad(pt: bytes):
-    padding = 0
+    padl = 0
 
     for b in pt[::-1]:
-        padding += 1
+        padl += 1
 
         if b == 0x80:
             break
@@ -29,7 +29,7 @@ def remove_pad(pt: bytes):
         if b != 0x00:
             raise RuntimeError('Invalid padding')
 
-    return pt[:-padding]
+    return pt[:-padl]
 
 
 def nibbles(x: Union[bytes, str]) -> Generator[int, None, None]:
