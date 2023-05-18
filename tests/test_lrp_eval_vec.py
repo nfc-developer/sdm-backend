@@ -12,7 +12,7 @@ def execute_test(KEY, IV, FINALIZE, UPDATEDKEY, RES):
     RES = binascii.unhexlify(RES)
     FINALIZE = FINALIZE == 1
 
-    assert LRP.eval_lrp(LRP.generate_plaintexts(KEY), LRP.generate_updated_keys(KEY)[UPDATEDKEY], IV, FINALIZE)\
+    assert LRP.eval_lrp(LRP.generate_plain_texts(KEY), LRP.generate_updated_keys(KEY)[UPDATEDKEY], IV, FINALIZE)\
         .hex().upper() == RES.hex().upper()
 
 

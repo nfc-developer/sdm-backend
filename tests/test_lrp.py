@@ -20,8 +20,8 @@ def test_incr_counter():
     assert b"\x00\x00\x00\x00" == incr_counter(b"\xFF\xFF\xFF\xFF")
 
 
-def test_vectors_generate_plaintexts():
-    p = LRP.generate_plaintexts(b"\x56\x78\x26\xB8\xDA\x8E\x76\x84\x32\xA9\x54\x8D\xBE\x4A\xA3\xA0")
+def test_vectors_generate_plain_texts():
+    p = LRP.generate_plain_texts(b"\x56\x78\x26\xB8\xDA\x8E\x76\x84\x32\xA9\x54\x8D\xBE\x4A\xA3\xA0")
     assert p[0] == b"\xAC\x20\xD3\x9F\x53\x41\xFE\x98\xDF\xCA\x21\xDA\x86\xBA\x79\x14"
     assert p[15] == b"\x71\xB4\x44\xAF\x25\x7A\x93\x21\x53\x11\xD7\x58\xDD\x33\x32\x47"
 
@@ -39,17 +39,17 @@ def test_nibbles():
 
 
 def test_eval_lrp():
-    p = LRP.generate_plaintexts(binascii.unhexlify("567826B8DA8E768432A9548DBE4AA3A0"))
+    p = LRP.generate_plain_texts(binascii.unhexlify("567826B8DA8E768432A9548DBE4AA3A0"))
     uk = LRP.generate_updated_keys(binascii.unhexlify("567826B8DA8E768432A9548DBE4AA3A0"))
     assert LRP.eval_lrp(p, uk[2], b"\x13\x59", final=True).hex() \
         == "1ba2c0c578996bc497dd181c6885a9dd"
 
-    p = LRP.generate_plaintexts(binascii.unhexlify("88B95581002057A93E421EFE4076338B"))
+    p = LRP.generate_plain_texts(binascii.unhexlify("88B95581002057A93E421EFE4076338B"))
     uk = LRP.generate_updated_keys(binascii.unhexlify("88B95581002057A93E421EFE4076338B"))
     assert LRP.eval_lrp(p, uk[2], b"\x77\x29\x9D", final=True).hex() \
         == "E9C04556A214AC3297B83E4BDF46F142".lower()
 
-    p = LRP.generate_plaintexts(binascii.unhexlify("9AFF3EF56FFEC3153B1CADB48B445409"))
+    p = LRP.generate_plain_texts(binascii.unhexlify("9AFF3EF56FFEC3153B1CADB48B445409"))
     uk = LRP.generate_updated_keys(binascii.unhexlify("9AFF3EF56FFEC3153B1CADB48B445409"))
     assert LRP.eval_lrp(p, uk[3], b"\x4B\x07\x3B\x24\x7C\xD4\x8F\x7E\x0A", final=False).hex() \
         == "909415E5C8BE77563050F2227E17C0E4".lower()
@@ -77,7 +77,7 @@ def test_cmac_subkeys():
     k = binascii.unhexlify("8195088CE6C393708EBBE6C7914ECB0B")
     kx = binascii.unhexlify("2D22571A33B2965A9B49FF4395A43046")
 
-    k0 = LRP.eval_lrp(LRP.generate_plaintexts(k), LRP.generate_updated_keys(k)[0], b"\x00" * 16, True)
+    k0 = LRP.eval_lrp(LRP.generate_plain_texts(k), LRP.generate_updated_keys(k)[0], b"\x00" * 16, True)
     assert (_Element(k0) * _Element(4)).encode().hex() == kx.hex()
 
 
