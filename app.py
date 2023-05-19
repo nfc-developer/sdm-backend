@@ -150,7 +150,6 @@ def _internal_tagpt(force_json=False):
 
     try:
         sdm_file_read_key = derive_tag_key(SYSTEM_MASTER_KEY, uid, 2)
-        print(sdm_file_read_key)
         res = validate_plain_sun(uid=uid,
                                  read_ctr=read_ctr,
                                  sdmmac=cmac,
