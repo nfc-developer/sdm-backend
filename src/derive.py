@@ -25,10 +25,8 @@ def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
-    cmac_code = CMAC.new(hmac_sha256(
-        master_key, DIV_CONST2 + bytes([key_no])), ciphermod=AES)
-    cmac_code.update(b"\x01" +
-                     hmac_sha256(hmac_sha256(master_key, DIV_CONST3, no_trunc=True), uid))
+    cmac_code = CMAC.new(hmac_sha256(master_key, DIV_CONST2 + bytes([key_no])), ciphermod=AES)
+    cmac_code.update(b"\x01" + hmac_sha256(hmac_sha256(master_key, DIV_CONST3, no_trunc=True), uid))
     return cmac_code.digest()
 
 

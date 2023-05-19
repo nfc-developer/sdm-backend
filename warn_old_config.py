@@ -1,11 +1,11 @@
-# pylint: disable=unused-import, bare-except
+# pylint: disable=unused-import
 # ruff: noqa: F401, E722
 
 import sys
 
 try:
-    from config import SDM_MASTER_KEY
-except:
+    from config import SDM_MASTER_KEY  # type: ignore
+except ImportError:
     # this is ok
     pass
 else:

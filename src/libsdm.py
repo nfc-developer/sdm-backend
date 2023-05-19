@@ -18,12 +18,12 @@ from src.lrp import LRP
 
 
 class EncMode(Enum):
-    AES = 0,
+    AES = 0
     LRP = 1
 
 
 class ParamMode(Enum):
-    SEPARATED = 0,
+    SEPARATED = 0
     BULK = 1
 
 
@@ -35,7 +35,7 @@ def calculate_sdmmac(param_mode: ParamMode,
                      sdm_file_read_key: bytes,
                      picc_data: bytes,
                      enc_file_data: Optional[bytes] = None,
-                     mode: EncMode = None) -> bytes:
+                     mode: Optional[EncMode] = None) -> bytes:
     """
     Calculate SDMMAC for NTAG 424 DNA
     :param param_mode: Type of dynamic URL encoding (ParamMode)
@@ -99,7 +99,7 @@ def decrypt_file_data(sdm_file_read_key: bytes,
                       picc_data: bytes,
                       read_ctr: bytes,
                       enc_file_data: bytes,
-                      mode: EncMode = None) -> bytes:
+                      mode: Optional[EncMode] = None) -> bytes:
     """
     Decrypt SDMEncFileData for NTAG 424 DNA
     :param sdm_file_read_key: SUN decryption key (K_SDMFileReadKey)
@@ -130,7 +130,8 @@ def decrypt_file_data(sdm_file_read_key: bytes,
         # but actually seems to be KSesSDMFileReadENC
         return AES.new(k_ses_sdm_file_read_enc, AES.MODE_CBC, IV=ive) \
             .decrypt(enc_file_data)
-    elif mode == EncMode.LRP:
+
+    if mode == EncMode.LRP:
         sv2stream = io.BytesIO()
         sv2stream.write(b"\x00\x01\x00\x80")
         sv2stream.write(picc_data)
@@ -147,11 +148,11 @@ def decrypt_file_data(sdm_file_read_key: bytes,
 
         lrp_session_encing = LRP(master_key, 1, read_ctr + b"\x00\x00\x00", pad=False)
         return lrp_session_encing.decrypt(enc_file_data)
-    else:
-        raise InvalidMessage("Invalid encryption mode")
+
+    raise InvalidMessage("Invalid encryption mode")
 
 
-def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read_key: bytes, mode: EncMode = None):
+def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read_key: bytes, mode: Optional[EncMode] = None):
     if mode is None:
         mode = EncMode.AES
 
@@ -181,12 +182,14 @@ def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read
 def get_encryption_mode(picc_enc_data: bytes):
     if len(picc_enc_data) == 16:
         return EncMode.AES
-    elif len(picc_enc_data) == 24:
+
+    if len(picc_enc_data) == 24:
         return EncMode.LRP
-    else:
-        raise InvalidMessage("Unsupported encryption mode.")
+
+    raise InvalidMessage("Unsupported encryption mode.")
 
 
+# pylint: disable=too-many-arguments, too-many-locals
 def decrypt_sun_message(param_mode: ParamMode,
                         sdm_meta_read_key: bytes,
                         sdm_file_read_key: Callable[[bytes], bytes],
@@ -246,6 +249,9 @@ def decrypt_sun_message(param_mode: ParamMode,
         read_ctr = p_stream.read(3)
         data_stream.write(read_ctr)
         read_ctr_num = struct.unpack("<I", read_ctr + b"\x00")[0]
+
+    if uid is None:
+        raise InvalidMessage("UID cannot be None.")
 
     file_key = sdm_file_read_key(uid)
 

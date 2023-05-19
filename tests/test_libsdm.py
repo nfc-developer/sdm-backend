@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long, invalid-name
+
 """
 This code was implemented based on the examples provided in:
 * AN12196: NTAG 424 DNA and NTAG 424 DNA TagTamper features and hints
@@ -158,8 +160,7 @@ def test_decrypt_with_kdf1():
         sdm_meta_read_key=derive_undiversified_key(MASTER_KEY, 1),
         sdm_file_read_key=lambda uid: derive_tag_key(MASTER_KEY, uid, 2),
         picc_enc_data=binascii.unhexlify('8DE9030262807261850FCCF5FE007E21'),
-        enc_file_data=binascii.unhexlify(
-            '382B4C3D68552C3A5F417F0695A3D857923764E1737AD1F80E834E46387F45DC77FE7468BBCF9DBF43B29CA58E8D6435F908C9C0CD56E9B4B9960FE1279C5DF1'),
+        enc_file_data=binascii.unhexlify('382B4C3D68552C3A5F417F0695A3D857923764E1737AD1F80E834E46387F45DC77FE7468BBCF9DBF43B29CA58E8D6435F908C9C0CD56E9B4B9960FE1279C5DF1'),
         sdmmac=binascii.unhexlify('DF3EF20BE7D91C8E'))
 
     assert res['picc_data_tag'] == b"\xc7"

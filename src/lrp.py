@@ -7,10 +7,9 @@ NOTE: This implementation is suitable only for use on PCD side (the device which
 You shouldn't use this code on PICC (NFC tag/card) side and it shouldn't be ported to JavaCards or similar,
 because in such case it may be not resistant to the side channel attacks.
 """
-
 import binascii
 import io
-from typing import Generator, List, Union
+from typing import Generator, List, Optional, Union
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.SecretSharing import _Element
@@ -73,7 +72,7 @@ def d(k: bytes, v: bytes) -> bytes:
 
 
 class LRP:
-    def __init__(self, key: bytes, u: int, r: bytes = None, pad: bool = True):
+    def __init__(self, key: bytes, u: int, r: Optional[bytes] = None, pad: bool = True):
         """
         Leakage Resilient Primitive
         :param key: secret key from which updated keys will be derived
@@ -89,12 +88,12 @@ class LRP:
         self.r = r
         self.pad = pad
 
-        self.p = LRP.generate_plain_texts(key)
+        self.p = LRP.generate_plaintexts(key)
         self.ku = LRP.generate_updated_keys(key)
         self.kp = self.ku[self.u]
 
     @staticmethod
-    def generate_plain_texts(k: bytes, m: int = 4) -> List[bytes]:
+    def generate_plaintexts(k: bytes, m: int = 4) -> List[bytes]:
         """
         Algorithm 1
         """
@@ -212,8 +211,9 @@ class LRP:
         stream = io.BytesIO(data)
 
         k0 = LRP.eval_lrp(self.p, self.kp, b"\x00" * 16, True)
-        k1 = (_Element(k0) * _Element(2)).encode()
-        k2 = (_Element(k0) * _Element(4)).encode()
+
+        k1 = (_Element(k0) * _Element(2)).encode()  # type: ignore
+        k2 = (_Element(k0) * _Element(4)).encode()  # type: ignore
 
         y = b"\x00" * AES.block_size
 

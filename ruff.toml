@@ -1,8 +1,7 @@
-line-length = 120
+line-length = 127
 select = ["E", "F", "B",  "W", "I001"]
-ignore = ["E501"]
+ignore = ["E501", "B905", "F401"]
 unfixable = ["B"]
-
 [per-file-ignores]
 "__init__.py" = ["E402"]
 "path/to/file.py" = ["E402"]

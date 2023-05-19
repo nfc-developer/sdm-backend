@@ -1,3 +1,5 @@
+# pylint: disable=unused-import
+
 import argparse
 import binascii
 import io
@@ -5,6 +7,7 @@ import io
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import BadRequest
 
+import warn_old_config
 from config import (
     CTR_PARAM,
     ENC_FILE_DATA_PARAM,
@@ -56,10 +59,11 @@ def sdm_main():
     return render_template('sdm_main.html')
 
 
+# pylint:  disable=too-many-branches
 def parse_parameters():
-    if request.args.get('e'):
+    arg_e = request.args.get('e')
+    if arg_e:
         param_mode = ParamMode.BULK
-        arg_e = request.args.get('e')
 
         try:
             e_b = binascii.unhexlify(arg_e)
@@ -99,11 +103,10 @@ def parse_parameters():
         sdmmac = request.args.get(SDMMAC_PARAM)
 
         if not enc_picc_data:
-            raise BadRequest(
-                f"Parameter {ENC_PICC_DATA_PARAM} is required")
+            raise BadRequest(f"Parameter {ENC_PICC_DATA_PARAM} is required")
 
         if not sdmmac:
-            raise BadRequest("Parameter {SDMMAC_PARAM} is required")
+            raise BadRequest(f"Parameter {SDMMAC_PARAM} is required")
 
         try:
             enc_file_data_b = None
@@ -153,8 +156,7 @@ def _internal_tagpt(force_json=False):
                                  sdmmac=cmac,
                                  sdm_file_read_key=sdm_file_read_key)
     except InvalidMessage:
-        raise BadRequest(
-            "Invalid message (most probably wrong signature).") from None
+        raise BadRequest("Invalid message (most probably wrong signature).") from None
 
     if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
         raise BadRequest("Invalid encryption mode, expected LRP.")
@@ -165,11 +167,11 @@ def _internal_tagpt(force_json=False):
             "read_ctr": res['read_ctr'],
             "enc_mode": res['encryption_mode'].name
         })
-    else:
-        return render_template('sdm_info.html',
-                               encryption_mode=res['encryption_mode'].name,
-                               uid=res['uid'],
-                               read_ctr_num=res['read_ctr'])
+
+    return render_template('sdm_info.html',
+                           encryption_mode=res['encryption_mode'].name,
+                           uid=res['uid'],
+                           read_ctr_num=res['read_ctr'])
 
 
 @app.route('/webnfc')
@@ -203,6 +205,7 @@ def sdm_api_info():
         return jsonify({"error": str(err)})
 
 
+# pylint:  disable=too-many-branches, too-many-statements, too-many-locals
 def _internal_sdm(with_tt=False, force_json=False):
     """
     SUN decrypting/validating endpoint.
@@ -211,16 +214,13 @@ def _internal_sdm(with_tt=False, force_json=False):
 
     try:
         res = decrypt_sun_message(param_mode=param_mode,
-                                  sdm_meta_read_key=derive_undiversified_key(
-                                      SYSTEM_MASTER_KEY, 1),
-                                  sdm_file_read_key=lambda uid: derive_tag_key(
-                                      SYSTEM_MASTER_KEY, uid, 2),
+                                  sdm_meta_read_key=derive_undiversified_key(SYSTEM_MASTER_KEY, 1),
+                                  sdm_file_read_key=lambda uid: derive_tag_key(SYSTEM_MASTER_KEY, uid, 2),
                                   picc_enc_data=enc_picc_data_b,
                                   sdmmac=sdmmac_b,
                                   enc_file_data=enc_file_data_b)
     except InvalidMessage:
-        raise BadRequest(
-            "Invalid message (most probably wrong signature).") from InvalidMessage
+        raise BadRequest("Invalid message (most probably wrong signature).") from InvalidMessage
 
     if REQUIRE_LRP and res['encryption_mode'] != EncMode.LRP:
         raise BadRequest("Invalid encryption mode, expected LRP.")
@@ -282,24 +282,22 @@ def _internal_sdm(with_tt=False, force_json=False):
             "tt_status": tt_status_api,
             "enc_mode": encryption_mode
         })
-    else:
-        return render_template('sdm_info.html',
-                               encryption_mode=encryption_mode,
-                               picc_data_tag=picc_data_tag,
-                               uid=uid,
-                               read_ctr_num=read_ctr_num,
-                               file_data=file_data,
-                               file_data_utf8=file_data_utf8,
-                               tt_status=tt_status,
-                               tt_color=tt_color)
+
+    return render_template('sdm_info.html',
+                           encryption_mode=encryption_mode,
+                           picc_data_tag=picc_data_tag,
+                           uid=uid,
+                           read_ctr_num=read_ctr_num,
+                           file_data=file_data,
+                           file_data_utf8=file_data_utf8,
+                           tt_status=tt_status,
+                           tt_color=tt_color)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='OTA NFC Server')
-    parser.add_argument('--host', type=str, nargs='?',
-                        help='address to listen on')
-    parser.add_argument('--port', type=int, nargs='?',
-                        help='port to listen on')
+    parser.add_argument('--host', type=str, nargs='?', help='address to listen on')
+    parser.add_argument('--port', type=int, nargs='?', help='port to listen on')
 
     args = parser.parse_args()
 
