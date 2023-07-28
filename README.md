@@ -50,7 +50,7 @@ Feel free to reach me at hello@nfcdeveloper.com if you have any questions concer
    docker run \
        -p 5000:80 \
        -e SYSTEM_MASTER_KEY=00000000000000000000000000000000 \
-       icedevml/sdm-backend:build20230124-v1
+       icedevml/sdm-backend:build20230728-v1
    ```
 2. Visit [localhost:5000](http://127.0.0.1:5000/) and check out the examples.
 
