@@ -17,7 +17,7 @@ We suggest using [NFC Developer App](https://nfcdeveloper.com/tag-app/tutorial/)
 <a href="https://nfcdeveloper.com/tag-app/tutorial/"><img src="https://raw.githubusercontent.com/icedevml/sdm-backend/33afbc8ca7abe33326d947610556315e5ba5e842/.github/nfcdeveloperapp-ad.png" title="NFC Developer App Information"></a>
 
 ## Contact
-Feel free to reach me at mike@nfcdeveloper.com if you have any questions concerning this topic.
+Feel free to reach me at hello@nfcdeveloper.com if you have any questions concerning this topic.
 
 ## How to test?
 ### Manual installation
@@ -58,6 +58,6 @@ Note: If you are running production instance, the `SYSTEM_MASTER_KEY` should be 
 
 ## Authors
 
-* Michał Leszczyński (mike@nfcdeveloper.com)
+* Michał Leszczyński (hello@nfcdeveloper.com)
 
 Feel free to contact if you have any questions.
