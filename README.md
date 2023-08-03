@@ -14,7 +14,7 @@ Check out the demo at [sdm.nfcdeveloper.com](https://sdm.nfcdeveloper.com/). Thi
 ## How to configure the tags?
 We suggest using [NFC Developer App](https://nfcdeveloper.com/tag-app/tutorial/) for Android/iOS in order to configure the tags. This application will do most things "under the hood" and your tags will work out-of-the-box with this project.
 
-<a href="https://nfcdeveloper.com/tag-app/tutorial/"><img src="https://raw.githubusercontent.com/icedevml/sdm-backend/33afbc8ca7abe33326d947610556315e5ba5e842/.github/nfcdeveloperapp-ad.png" title="NFC Developer App Information"></a>
+<a href="https://nfcdeveloper.com/tag-app/tutorial/"><img src="https://raw.githubusercontent.com/nfc-developer/sdm-backend/33afbc8ca7abe33326d947610556315e5ba5e842/.github/nfcdeveloperapp-ad.png" title="NFC Developer App Information"></a>
 
 ## Contact
 Feel free to reach me at hello@nfcdeveloper.com if you have any questions concerning this topic.
@@ -24,7 +24,7 @@ Feel free to reach me at hello@nfcdeveloper.com if you have any questions concer
 1. Clone the repository
    ```
    apt install -y git
-   git clone https://github.com/icedevml/sdm-backend.git
+   git clone https://github.com/nfc-developer/sdm-backend.git
    cd sdm-backend
    ```
 2. Setup the virtualenv
