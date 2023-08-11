@@ -14,7 +14,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import CMAC
 
 import config
-from src.lrp import LRP
+from libsdm.lrp import LRP
 
 
 class EncMode(Enum):

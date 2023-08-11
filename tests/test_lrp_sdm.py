@@ -7,7 +7,7 @@ A short example how to decrypt and validate CMAC for a simple SDM in LRP mode on
 import binascii
 import io
 
-from src.lrp import LRP
+from libsdm.lrp import LRP
 
 
 def test_lrp_sdm():

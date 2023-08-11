@@ -8,7 +8,7 @@ import binascii
 
 from Crypto.Protocol.SecretSharing import _Element
 
-from src.lrp import LRP, incr_counter, nibbles
+from libsdm.lrp import LRP, incr_counter, nibbles
 
 
 def test_incr_counter():
