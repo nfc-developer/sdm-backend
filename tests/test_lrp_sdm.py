@@ -1,12 +1,13 @@
+# pylint: disable=line-too-long, invalid-name
+
 """
 A short example how to decrypt and validate CMAC for a simple SDM in LRP mode on NTAG 424 DNA.
 """
 
+import binascii
 import io
 
-from lrp import LRP
-
-import binascii
+from src.lrp import LRP
 
 
 def test_lrp_sdm():
@@ -51,7 +52,7 @@ def test_lrp_sdm():
     # generate actual MAC_LRP
     mac_obj = LRP(master_key, 0)
     # everything in hex since PICCData till the MAC offset
-    msg_no_cmac = (msg.split('x')[0] + 'x').encode('ascii')
+    msg_no_cmac = (msg.split('x', maxsplit=1)[0] + 'x').encode('ascii')
     full_tag = mac_obj.cmac(msg_no_cmac)
     short_tag = bytes(bytearray([full_tag[i] for i in range(16) if i % 2 == 1])).hex()
 

@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long, invalid-name
+
 """
 Leakage Resilient Primitive (AN12304).
 
@@ -5,10 +7,9 @@ NOTE: This implementation is suitable only for use on PCD side (the device which
 You shouldn't use this code on PICC (NFC tag/card) side and it shouldn't be ported to JavaCards or similar,
 because in such case it may be not resistant to the side channel attacks.
 """
-
 import binascii
 import io
-from typing import Generator, List, Union
+from typing import Generator, List, Optional, Union
 
 from Crypto.Cipher import AES
 from Crypto.Protocol.SecretSharing import _Element
@@ -71,7 +72,7 @@ def d(k: bytes, v: bytes) -> bytes:
 
 
 class LRP:
-    def __init__(self, key: bytes, u: int, r: bytes = None, pad: bool = True):
+    def __init__(self, key: bytes, u: int, r: Optional[bytes] = None, pad: bool = True):
         """
         Leakage Resilient Primitive
         :param key: secret key from which updated keys will be derived
@@ -100,7 +101,7 @@ class LRP:
         h = e(h, b"\x55" * 16)
         p = []
 
-        for i in range(0, 2**m):
+        for _ in range(0, 2**m):
             p.append(e(h, b"\xaa" * 16))
             h = e(h, b"\x55" * 16)
 
@@ -115,7 +116,7 @@ class LRP:
         h = e(h, b"\xaa" * 16)
         uk = []
 
-        for i in range(0, q):
+        for _ in range(0, q):
             uk.append(e(h, b"\xaa" * 16))
             h = e(h, b"\x55" * 16)
 
@@ -143,33 +144,33 @@ class LRP:
         :param data: plaintext
         :return: ciphertext
         """
-        ptstream = io.BytesIO()
-        ctstream = io.BytesIO()
-        ptstream.write(data)
+        pt_stream = io.BytesIO()
+        ct_stream = io.BytesIO()
+        pt_stream.write(data)
 
         if self.pad:
-            ptstream.write(b"\x80")
+            pt_stream.write(b"\x80")
 
-            while ptstream.getbuffer().nbytes % AES.block_size != 0:
-                ptstream.write(b"\x00")
-        elif ptstream.getbuffer().nbytes % AES.block_size != 0:
+            while pt_stream.getbuffer().nbytes % AES.block_size != 0:
+                pt_stream.write(b"\x00")
+        elif pt_stream.getbuffer().nbytes % AES.block_size != 0:
             raise RuntimeError("Parameter pt must have length multiple of AES block size.")
-        elif ptstream.getbuffer().nbytes == 0:
+        elif pt_stream.getbuffer().nbytes == 0:
             raise RuntimeError("Zero length pt not supported.")
 
-        ptstream.seek(0)
+        pt_stream.seek(0)
 
         while True:
-            block = ptstream.read(AES.block_size)
+            block = pt_stream.read(AES.block_size)
 
-            if not len(block):
+            if len(block) == 0:
                 break
 
             y = LRP.eval_lrp(self.p, self.kp, self.r, final=True)
-            ctstream.write(e(y, block))
+            ct_stream.write(e(y, block))
             self.r = incr_counter(self.r)
 
-        return ctstream.getvalue()
+        return ct_stream.getvalue()
 
     def decrypt(self, data: bytes) -> bytes:
         """
@@ -177,23 +178,23 @@ class LRP:
         :param data: ciphertext
         :return: plaintext
         """
-        ctstream = io.BytesIO()
-        ctstream.write(data)
-        ctstream.seek(0)
+        ct_stream = io.BytesIO()
+        ct_stream.write(data)
+        ct_stream.seek(0)
 
-        ptstream = io.BytesIO()
+        pt_stream = io.BytesIO()
 
         while True:
-            block = ctstream.read(AES.block_size)
+            block = ct_stream.read(AES.block_size)
 
-            if not len(block):
+            if len(block) == 0:
                 break
 
             y = LRP.eval_lrp(self.p, self.kp, self.r, final=True)
-            ptstream.write(d(y, block))
+            pt_stream.write(d(y, block))
             self.r = incr_counter(self.r)
 
-        pt = ptstream.getvalue()
+        pt = pt_stream.getvalue()
 
         if self.pad:
             pt = remove_pad(pt)
@@ -210,8 +211,9 @@ class LRP:
         stream = io.BytesIO(data)
 
         k0 = LRP.eval_lrp(self.p, self.kp, b"\x00" * 16, True)
-        k1 = (_Element(k0) * _Element(2)).encode()
-        k2 = (_Element(k0) * _Element(4)).encode()
+
+        k1 = (_Element(k0) * _Element(2)).encode()  # type: ignore
+        k2 = (_Element(k0) * _Element(4)).encode()  # type: ignore
 
         y = b"\x00" * AES.block_size
 

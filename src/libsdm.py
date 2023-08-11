@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name, line-too-long
+
 """
 This code was implemented based on the examples provided in:
 * AN12196: NTAG 424 DNA and NTAG 424 DNA TagTamper features and hints
@@ -6,23 +8,22 @@ This code was implemented based on the examples provided in:
 import io
 import struct
 from enum import Enum
-from typing import Optional, Tuple, Callable
+from typing import Callable, Optional
 
-from Crypto.Hash import CMAC
 from Crypto.Cipher import AES
+from Crypto.Hash import CMAC
 
 import config
-
-from lrp import LRP
+from src.lrp import LRP
 
 
 class EncMode(Enum):
-    AES = 0,
+    AES = 0
     LRP = 1
 
 
 class ParamMode(Enum):
-    SEPARATED = 0,
+    SEPARATED = 0
     BULK = 1
 
 
@@ -34,7 +35,7 @@ def calculate_sdmmac(param_mode: ParamMode,
                      sdm_file_read_key: bytes,
                      picc_data: bytes,
                      enc_file_data: Optional[bytes] = None,
-                     mode: EncMode = None) -> bytes:
+                     mode: Optional[EncMode] = None) -> bytes:
     """
     Calculate SDMMAC for NTAG 424 DNA
     :param param_mode: Type of dynamic URL encoding (ParamMode)
@@ -50,7 +51,7 @@ def calculate_sdmmac(param_mode: ParamMode,
     input_buf = io.BytesIO()
 
     if enc_file_data:
-        sdmmac_param_text = "&{}=".format(config.SDMMAC_PARAM)
+        sdmmac_param_text = f"&{config.SDMMAC_PARAM}="
 
         if param_mode == ParamMode.BULK or not config.SDMMAC_PARAM:
             sdmmac_param_text = ""
@@ -86,8 +87,8 @@ def calculate_sdmmac(param_mode: ParamMode,
         lrp_master = LRP(sdm_file_read_key, 0)
         master_key = lrp_master.cmac(sv)
 
-        lrp_sess_macing = LRP(master_key, 0)
-        mac_digest = lrp_sess_macing.cmac(input_buf.getvalue())
+        lrp_session_macing = LRP(master_key, 0)
+        mac_digest = lrp_session_macing.cmac(input_buf.getvalue())
     else:
         raise InvalidMessage("Invalid encryption mode.")
 
@@ -98,7 +99,7 @@ def decrypt_file_data(sdm_file_read_key: bytes,
                       picc_data: bytes,
                       read_ctr: bytes,
                       enc_file_data: bytes,
-                      mode: EncMode = None) -> bytes:
+                      mode: Optional[EncMode] = None) -> bytes:
     """
     Decrypt SDMEncFileData for NTAG 424 DNA
     :param sdm_file_read_key: SUN decryption key (K_SDMFileReadKey)
@@ -129,7 +130,8 @@ def decrypt_file_data(sdm_file_read_key: bytes,
         # but actually seems to be KSesSDMFileReadENC
         return AES.new(k_ses_sdm_file_read_enc, AES.MODE_CBC, IV=ive) \
             .decrypt(enc_file_data)
-    elif mode == EncMode.LRP:
+
+    if mode == EncMode.LRP:
         sv2stream = io.BytesIO()
         sv2stream.write(b"\x00\x01\x00\x80")
         sv2stream.write(picc_data)
@@ -144,24 +146,27 @@ def decrypt_file_data(sdm_file_read_key: bytes,
         lrp_master = LRP(sdm_file_read_key, 0)
         master_key = lrp_master.cmac(sv)
 
-        lrp_sess_encing = LRP(master_key, 1, read_ctr + b"\x00\x00\x00", pad=False)
-        return lrp_sess_encing.decrypt(enc_file_data)
-    else:
-        raise InvalidMessage("Invalid encryption mode")
+        lrp_session_encing = LRP(master_key, 1, read_ctr + b"\x00\x00\x00", pad=False)
+        return lrp_session_encing.decrypt(enc_file_data)
+
+    raise InvalidMessage("Invalid encryption mode")
 
 
-def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read_key: bytes, mode: EncMode = None):
+def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read_key: bytes, mode: Optional[EncMode] = None):
     if mode is None:
         mode = EncMode.AES
 
     read_ctr_ba = bytearray(read_ctr)
     read_ctr_ba.reverse()
 
-    datastream = io.BytesIO()
-    datastream.write(uid)
-    datastream.write(read_ctr_ba)
+    data_stream = io.BytesIO()
+    data_stream.write(uid)
+    data_stream.write(read_ctr_ba)
 
-    proper_sdmmac = calculate_sdmmac(ParamMode.SEPARATED, sdm_file_read_key, datastream.getvalue(), mode=mode)
+    proper_sdmmac = calculate_sdmmac(ParamMode.SEPARATED,
+                                     sdm_file_read_key,
+                                     data_stream.getvalue(),
+                                     mode=mode)
 
     if sdmmac != proper_sdmmac:
         raise InvalidMessage("Message is not properly signed - invalid MAC")
@@ -177,12 +182,14 @@ def validate_plain_sun(uid: bytes, read_ctr: bytes, sdmmac: bytes, sdm_file_read
 def get_encryption_mode(picc_enc_data: bytes):
     if len(picc_enc_data) == 16:
         return EncMode.AES
-    elif len(picc_enc_data) == 24:
+
+    if len(picc_enc_data) == 24:
         return EncMode.LRP
-    else:
-        raise InvalidMessage("Unsupported encryption mode.")
+
+    raise InvalidMessage("Unsupported encryption mode.")
 
 
+# pylint: disable=too-many-arguments, too-many-locals
 def decrypt_sun_message(param_mode: ParamMode,
                         sdm_meta_read_key: bytes,
                         sdm_file_read_key: Callable[[bytes], bytes],
@@ -214,13 +221,13 @@ def decrypt_sun_message(param_mode: ParamMode,
     else:
         raise InvalidMessage("Invalid encryption mode.")
 
-    pstream = io.BytesIO(plaintext)
-    datastream = io.BytesIO()
+    p_stream = io.BytesIO(plaintext)
+    data_stream = io.BytesIO()
 
-    picc_data_tag = pstream.read(1)
+    picc_data_tag = p_stream.read(1)
     uid_mirroring_en = (picc_data_tag[0] & 0x80) == 0x80
     sdm_read_ctr_en = (picc_data_tag[0] & 0x40) == 0x40
-    uid_length = (picc_data_tag[0] & 0x0F)
+    uid_length = picc_data_tag[0] & 0x0F
 
     uid = None
     read_ctr = None
@@ -235,24 +242,32 @@ def decrypt_sun_message(param_mode: ParamMode,
         raise InvalidMessage("Unsupported UID length")
 
     if uid_mirroring_en:
-        uid = pstream.read(uid_length)
-        datastream.write(uid)
+        uid = p_stream.read(uid_length)
+        data_stream.write(uid)
 
     if sdm_read_ctr_en:
-        read_ctr = pstream.read(3)
-        datastream.write(read_ctr)
+        read_ctr = p_stream.read(3)
+        data_stream.write(read_ctr)
         read_ctr_num = struct.unpack("<I", read_ctr + b"\x00")[0]
+
+    if uid is None:
+        raise InvalidMessage("UID cannot be None.")
 
     file_key = sdm_file_read_key(uid)
 
-    if sdmmac != calculate_sdmmac(param_mode, file_key, datastream.getvalue(), enc_file_data, mode=mode):
+    if sdmmac != calculate_sdmmac(param_mode,
+                                  file_key,
+                                  data_stream.getvalue(),
+                                  enc_file_data,
+                                  mode=mode):
         raise InvalidMessage("Message is not properly signed - invalid MAC")
 
     if enc_file_data:
         if not read_ctr:
             raise InvalidMessage("SDMReadCtr is required to decipher SDMENCFileData.")
 
-        file_data = decrypt_file_data(file_key, datastream.getvalue(), read_ctr, enc_file_data, mode=mode)
+        file_data = decrypt_file_data(file_key, data_stream.getvalue(),
+                                      read_ctr, enc_file_data, mode=mode)
 
     return {
         "picc_data_tag": picc_data_tag,

@@ -1,7 +1,6 @@
 import binascii
 import os
 
-
 SYSTEM_MASTER_KEY = binascii.unhexlify(os.environ.get("SYSTEM_MASTER_KEY", "00000000000000000000000000000000"))
 
 ENC_PICC_DATA_PARAM = os.environ.get("ENC_PICC_DATA_PARAM", "picc_data")
@@ -12,4 +11,4 @@ CTR_PARAM = os.environ.get("CTR_PARAM", "ctr")
 
 SDMMAC_PARAM = os.environ.get("SDMMAC_PARAM", "cmac")
 
-REQUIRE_LRP = (os.environ.get("REQUIRE_LRP", "0") == "1")
+REQUIRE_LRP = os.environ.get("REQUIRE_LRP", "0") == "1"
