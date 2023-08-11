@@ -6,7 +6,7 @@ Test vectors from AN12304
 
 import binascii
 
-from src.lrp import LRP
+from libsdm.lrp import LRP
 
 
 def execute_test(KEY, IV, FINALIZE, UPDATEDKEY, RES):

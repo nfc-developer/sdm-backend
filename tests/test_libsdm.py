@@ -8,8 +8,8 @@ This code was implemented based on the examples provided in:
 import binascii
 
 import config
-from src.derive import derive_tag_key, derive_undiversified_key
-from src.libsdm import (
+from libsdm.derive import derive_tag_key, derive_undiversified_key
+from libsdm.sdm import (
     EncMode,
     InvalidMessage,
     ParamMode,

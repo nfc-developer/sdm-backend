@@ -17,8 +17,8 @@ from config import (
     SYSTEM_MASTER_KEY,
     UID_PARAM,
 )
-from src.derive import derive_tag_key, derive_undiversified_key
-from src.libsdm import (
+from libsdm.derive import derive_tag_key, derive_undiversified_key
+from libsdm.sdm import (
     EncMode,
     InvalidMessage,
     ParamMode,
