@@ -5,10 +5,13 @@ import hmac
 from Crypto.Cipher import AES
 from Crypto.Hash import CMAC
 
+from config import DERIVE_MODE
+from libsdm.legacy_derive import legacy_derive_tag_key, legacy_derive_undiversified_key
+
 # NOTE:
 # Key diversification methods were modified as of 2023-01-24
 # If you rely on the previous diversification methods,
-# please use commits from earlier dates
+# please use legacy_derive.py
 
 DIV_CONST1 = binascii.unhexlify("50494343446174614b6579")
 DIV_CONST2 = binascii.unhexlify("536c6f744d61737465724b6579")
@@ -22,6 +25,9 @@ def hmac_sha256(key, msg, no_trunc=False):
 
 # derive a key which is UID-diversified
 def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
+    if DERIVE_MODE == "legacy":
+        return legacy_derive_tag_key(master_key, uid, key_no)
+
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
@@ -32,6 +38,9 @@ def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
 
 # derive a key which is not UID-diversified
 def derive_undiversified_key(master_key: bytes, key_no: int):
+    if DERIVE_MODE == "legacy":
+        return legacy_derive_undiversified_key(master_key, key_no)
+
     if key_no != 1:
         raise RuntimeError("Only key #1 can be derived in undiversified mode.")
 

@@ -1,7 +1,8 @@
 import binascii
 import os
 
-SYSTEM_MASTER_KEY = binascii.unhexlify(os.environ.get("SYSTEM_MASTER_KEY", "00000000000000000000000000000000"))
+DERIVE_MODE = os.environ.get("DERIVE_MODE", "legacy")
+MASTER_KEY = binascii.unhexlify(os.environ.get("MASTER_KEY", "00000000000000000000000000000000"))
 
 ENC_PICC_DATA_PARAM = os.environ.get("ENC_PICC_DATA_PARAM", "picc_data")
 ENC_FILE_DATA_PARAM = os.environ.get("ENC_FILE_DATA_PARAM", "enc")

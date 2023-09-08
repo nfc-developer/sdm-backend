@@ -7,14 +7,13 @@ import io
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import BadRequest
 
-import warn_old_config
 from config import (
     CTR_PARAM,
     ENC_FILE_DATA_PARAM,
     ENC_PICC_DATA_PARAM,
     REQUIRE_LRP,
     SDMMAC_PARAM,
-    SYSTEM_MASTER_KEY,
+    MASTER_KEY,
     UID_PARAM,
 )
 from libsdm.derive import derive_tag_key, derive_undiversified_key
@@ -47,7 +46,7 @@ def handler_not_found(err):
 
 @app.context_processor
 def inject_demo_mode():
-    demo_mode = SYSTEM_MASTER_KEY == (b"\x00" * 16)
+    demo_mode = MASTER_KEY == (b"\x00" * 16)
     return {"demo_mode": demo_mode}
 
 
@@ -149,7 +148,7 @@ def _internal_tagpt(force_json=False):
         raise BadRequest("Failed to decode parameters.") from None
 
     try:
-        sdm_file_read_key = derive_tag_key(SYSTEM_MASTER_KEY, uid, 2)
+        sdm_file_read_key = derive_tag_key(MASTER_KEY, uid, 2)
         res = validate_plain_sun(uid=uid,
                                  read_ctr=read_ctr,
                                  sdmmac=cmac,
@@ -213,8 +212,8 @@ def _internal_sdm(with_tt=False, force_json=False):
 
     try:
         res = decrypt_sun_message(param_mode=param_mode,
-                                  sdm_meta_read_key=derive_undiversified_key(SYSTEM_MASTER_KEY, 1),
-                                  sdm_file_read_key=lambda uid: derive_tag_key(SYSTEM_MASTER_KEY, uid, 2),
+                                  sdm_meta_read_key=derive_undiversified_key(MASTER_KEY, 1),
+                                  sdm_file_read_key=lambda uid: derive_tag_key(MASTER_KEY, uid, 2),
                                   picc_enc_data=enc_picc_data_b,
                                   sdmmac=sdmmac_b,
                                   enc_file_data=enc_file_data_b)
