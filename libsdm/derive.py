@@ -8,7 +8,7 @@ from Crypto.Hash import CMAC
 # NOTE:
 # Key diversification methods were modified as of 2023-01-24
 # If you rely on the previous diversification methods,
-# please use commits from earlier dates
+# please use legacy_derive.py
 
 DIV_CONST1 = binascii.unhexlify("50494343446174614b6579")
 DIV_CONST2 = binascii.unhexlify("536c6f744d61737465724b6579")
