@@ -15,8 +15,16 @@ from config import (
     SDMMAC_PARAM,
     MASTER_KEY,
     UID_PARAM,
+    DERIVE_MODE,
 )
-from libsdm.derive import derive_tag_key, derive_undiversified_key
+
+if DERIVE_MODE == "legacy":
+    from libsdm.legacy_derive import derive_tag_key, derive_undiversified_key
+elif DERIVE_MODE == "standard":
+    from libsdm.derive import derive_tag_key, derive_undiversified_key
+else:
+    raise RuntimeError("Invalid DERIVE_MODE.")
+
 from libsdm.sdm import (
     EncMode,
     InvalidMessage,

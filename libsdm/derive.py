@@ -25,9 +25,6 @@ def hmac_sha256(key, msg, no_trunc=False):
 
 # derive a key which is UID-diversified
 def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
-    if DERIVE_MODE == "legacy":
-        return legacy_derive_tag_key(master_key, uid, key_no)
-
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
@@ -38,9 +35,6 @@ def derive_tag_key(master_key: bytes, uid: bytes, key_no: int):
 
 # derive a key which is not UID-diversified
 def derive_undiversified_key(master_key: bytes, key_no: int):
-    if DERIVE_MODE == "legacy":
-        return legacy_derive_undiversified_key(master_key, key_no)
-
     if key_no != 1:
         raise RuntimeError("Only key #1 can be derived in undiversified mode.")
 

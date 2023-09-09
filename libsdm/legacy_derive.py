@@ -4,7 +4,7 @@ import hashlib
 # old derivation algorithm compatible with NFC Developer App
 
 # derive a key which is UID-diversified
-def legacy_derive_tag_key(master_key: bytes, uid: bytes, key_no: int) -> bytes:
+def derive_tag_key(master_key: bytes, uid: bytes, key_no: int) -> bytes:
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
@@ -12,7 +12,7 @@ def legacy_derive_tag_key(master_key: bytes, uid: bytes, key_no: int) -> bytes:
 
 
 # derive a key which is not UID-diversified
-def legacy_derive_undiversified_key(master_key: bytes, key_no: int) -> bytes:
+def derive_undiversified_key(master_key: bytes, key_no: int) -> bytes:
     if master_key == (b"\x00" * 16):
         return b"\x00" * 16
 
