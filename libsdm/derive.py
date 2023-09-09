@@ -5,9 +5,6 @@ import hmac
 from Crypto.Cipher import AES
 from Crypto.Hash import CMAC
 
-from config import DERIVE_MODE
-from libsdm.legacy_derive import legacy_derive_tag_key, legacy_derive_undiversified_key
-
 # NOTE:
 # Key diversification methods were modified as of 2023-01-24
 # If you rely on the previous diversification methods,
