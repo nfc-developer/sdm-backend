@@ -47,6 +47,10 @@ Feel free to reach me at hello@nfcdeveloper.com if you have any questions concer
 ### Using Docker
 1. Launch sdm-backend on port 5000:
    ```
+   # ensure to delete old version, if it exists
+   docker rmi icedevml/sdm-backend:latest || true
+
+   # run sdm-backend
    docker run \
        -p 5000:80 \
        -e MASTER_KEY=00000000000000000000000000000000 \
